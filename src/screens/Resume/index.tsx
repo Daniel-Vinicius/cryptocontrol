@@ -17,6 +17,7 @@ import { HistoryCard } from '../../components/HistoryCard';
 import { DataListProps } from '../Dashboard';
 
 import { formatToUSD } from '../../utils/formatToUSD';
+import { getRandomColor } from '../../utils/getRandomColor';
 
 import {
   Container,
@@ -37,6 +38,7 @@ interface CoinData {
   total: number;
   totalFormatted: string;
   percent: string;
+  color: string;
 }
 
 export function Resume() {
@@ -66,59 +68,62 @@ export function Resume() {
     const response = await AsyncStorage.getItem(collectionKeyTransactions);
     const transactionsParsed = response ? JSON.parse(response) as Omit<DataListProps, "amountFormatted" | "amount">[] : [];
 
-    const sales = transactionsParsed.filter(transaction =>
-      transaction.type === 'negative' &&
-      new Date(transaction.date).getMonth() === selectedDate.getMonth() &&
-      new Date(transaction.date).getFullYear() === selectedDate.getFullYear()
+    const purchases = transactionsParsed.filter(transaction =>
+      transaction.type === 'positive' &&
+      new Date(transaction.date).getMonth() <= selectedDate.getMonth() &&
+      new Date(transaction.date).getFullYear() <= selectedDate.getFullYear()
     );
 
-    const outputsTotal = sales.reduce((accumulator, sale) => {
-      const amount = sale.coin.quantity * sale.coin.price;
+    const purchasesTotal = purchases.reduce((accumulator, purchase) => {
+      const amount = purchase.coin.quantity * purchase.coin.price;
 
       return accumulator + Number(amount);
     }, 0);
 
-    // const totalByCategory: CategoryData[] = [];
+    const purchasedCoins = purchases.map(p => p.coin);
 
-    // categories.forEach(category => {
-    //   let categorySum = 0;
+    const totalByCoins: CoinData[] = [];
 
-    //   outputs.forEach(output => {
-    //     if (output.category === category.key) {
-    //       categorySum += Number(output.amount);
-    //     }
-    //   })
+    purchasedCoins.forEach(coin => {
+      let coinSum = 0;
 
-    //   if (categorySum > 0) {
-    //     const percent = `${(categorySum / outputsTotal * 100).toFixed(1)}%`;
+      purchases.forEach(purchase => {
+        if (purchase.coin.id === coin.id) {
+          const amount = purchase.coin.quantity * purchase.coin.price;
+          coinSum += Number(amount);
+        }
+      })
 
-    //     totalByCategory.push({
-    //       key: category.key,
-    //       name: category.name,
-    //       total: categorySum,
-    //       totalFormatted: formatToUSD(categorySum),
-    //       color: category.color,
-    //       percent,
-    //     });
-    //   }
-    // });
+      if (coinSum > 0) {
+        const percent = `${(coinSum / purchasesTotal * 100).toFixed(1)}%`;
 
-    // setTotalByCategories(totalByCategory);
+        totalByCoins.push({
+          name: coin.name,
+          symbol: coin.symbol,
+          total: coinSum,
+          totalFormatted: formatToUSD(coinSum),
+          percent,
+          color: getRandomColor()
+        });
+      }
+    });
+
+    setTotalByCoin(totalByCoins);
     setIsLoading(false);
   }
 
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     loadData()
-  //   }, [selectedDate])
-  // )
+  useFocusEffect(
+    useCallback(() => {
+      loadData()
+    }, [selectedDate])
+  )
 
   return (
     <Container>
       <Header>
-        <Title>Resumo por categoria</Title>
+        <Title>Resumo por moeda (Compras)</Title>
       </Header>
-{/* 
+
       {isLoading ? (
         <LoadContainer>
           <ActivityIndicator color={theme.colors.secondary} size="large" />
@@ -144,8 +149,8 @@ export function Resume() {
 
           <ChartContainer>
             <VictoryPie
-              data={totalByCategories}
-              colorScale={totalByCategories.map(category => category.color)}
+              data={totalByCoin}
+              colorScale={totalByCoin.map(coin => coin.color)}
               x="percent"
               y="total"
               labelRadius={50}
@@ -159,16 +164,16 @@ export function Resume() {
             />
           </ChartContainer>
 
-          {totalByCategories.map(category => (
+          {totalByCoin.map(coin => (
             <HistoryCard
-              key={category.key}
-              title={category.name}
-              amount={category.totalFormatted}
-              color={category.color}
+              key={coin.symbol}
+              color={coin.color}
+              title={coin.name}
+              amount={coin.totalFormatted}
             />
           ))}
         </Content>
-      )} */}
+      )}
     </Container>
   );
 };
