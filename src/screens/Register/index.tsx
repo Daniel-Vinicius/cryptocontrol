@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Keyboard,
   Alert,
@@ -14,6 +14,7 @@ import { useAuth } from '../../hooks/auth';
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import uuid from 'react-native-uuid';
+import { formatToBRL } from '../../utils/formatToBRL';
 
 import { InputForm } from '../../components/Form/InputForm';
 import { Button } from '../../components/Form/Button';
@@ -29,6 +30,8 @@ import {
   Form,
   Fields,
   TransactionTypes,
+  TotalValueContainer,
+  TotalValue,
 } from './styles';
 
 interface FormData {
@@ -52,14 +55,14 @@ const schema = Yup.object().shape({
   name: Yup.string().required('Nome é obrigatório'),
   quantity: Yup.number()
     .typeError('Informe um valor numérico')
-    .positive('O valor deve ser positivo')
-    .required('Valor é obrigatório')
+    .positive('A quantidade deve ser positiva')
+    .required('Quantidade é obrigatória')
 });
 
 export function Register() {
   const [transactionType, setTransactionType] = useState('');
   const [coinModalOpen, setCoinModalOpen] = useState(false);
-  
+
   const [coin, setCoin] = useState<Coin>({
     id: 'coin',
     symbol: 'coin',
@@ -67,11 +70,11 @@ export function Register() {
     image: '',
     current_price: 0,
   });
-  
+
   const navigation = useNavigation<NavigationProps>();
   const { user } = useAuth();
 
-  const { control, handleSubmit, reset, formState: { errors } } = useForm({
+  const { control, handleSubmit, reset, getValues, formState: { errors } } = useForm({
     resolver: yupResolver(schema)
   });
 
@@ -96,15 +99,21 @@ export function Register() {
       return Alert.alert('Selecione a moeda.');
     }
 
-    const collectionKeyTransactions = `@gofinances:transactions_user:${user.id}`;
+    const collectionKeyTransactions = `@cryptocontrol:transactions_user:${user.id}`;
 
     const newTransaction = {
       id: String(uuid.v4()),
       name: form.name,
-      quantity: form.quantity,
       type: transactionType,
-      category: coin.id,
       date: new Date(),
+      coin: {
+        quantity: form.quantity,
+        price: coin.current_price,
+        id: coin.id,
+        name: coin.name,
+        symbol: coin.symbol,
+        image: coin.image
+      },
     };
 
     try {
@@ -126,9 +135,8 @@ export function Register() {
     }
   }
 
-  useEffect(() => {
-    console.log(coin)
-  }, [coin])
+  const { quantity } = getValues();
+  const totalValue = Number(quantity) * coin.current_price;
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -158,14 +166,14 @@ export function Register() {
 
             <TransactionTypes>
               <TransactionTypeButton
-                title="Income"
+                title="Compra"
                 type="positive"
                 onPress={() => handleTransactionTypeSelect('positive')}
                 isActive={transactionType === 'positive'}
               />
 
               <TransactionTypeButton
-                title="Outcome"
+                title="Venda"
                 type="negative"
                 onPress={() => handleTransactionTypeSelect('negative')}
                 isActive={transactionType === 'negative'}
@@ -173,6 +181,14 @@ export function Register() {
             </TransactionTypes>
 
             <CoinSelectButton title={coin.name} onPress={handleOpenSelectCoinModal} />
+            {coin.current_price !== 0 && quantity && (
+              <TotalValueContainer>
+                Valor total de{' '}
+                <TotalValue>
+                  {formatToBRL(totalValue)}
+                </TotalValue>
+              </TotalValueContainer>
+            )}
           </Fields>
 
           <Button title="Enviar" onPress={handleSubmit(handleRegister)} />

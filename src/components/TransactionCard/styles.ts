@@ -37,16 +37,16 @@ export const Footer = styled.View`
   margin-top: 18px;
 `;
 
-export const Category = styled.View`
+export const Coin = styled.View`
   flex-direction: row;
 `;
 
-export const Icon = styled(Feather)`
-  font-size: ${RFValue(20)}px;
-  color: ${({ theme }) => theme.colors.text};
+export const CoinImage = styled.Image`
+  width: 20px;
+  height: 20px;
 `;
 
-export const CategoryName = styled.Text`
+export const CoinName = styled.Text`
   font-family: ${({ theme }) => theme.fonts.regular};
   font-size: ${RFValue(14)}px;
   color: ${({ theme }) => theme.colors.text};

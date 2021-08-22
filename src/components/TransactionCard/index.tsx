@@ -1,23 +1,29 @@
 import React from 'react';
-import { categories } from '../../utils/categories';
 
 import {
   Container,
   Title,
   Amount,
   Footer,
-  Category,
-  Icon,
-  CategoryName,
+  Coin,
+  CoinImage,
+  CoinName,
   Date,
 } from './styles';
 
 export interface ITransactionCard {
-  type: 'positive' | 'negative';
   name: string;
-  amount: string;
-  category: string;
+  type: 'positive' | 'negative';
   date: string;
+  amountFormatted: string;
+  coin: {
+    quantity: number;
+    price: number;
+    id: string;
+    name: string;
+    symbol: string;
+    image?: string;
+  }
 }
 
 interface TransactionCardProps {
@@ -25,23 +31,20 @@ interface TransactionCardProps {
 }
 
 export function TransactionCard({ data }: TransactionCardProps) {
-  const { type, name, amount, date } = data;
-
-  const [category] = categories.filter(item => item.key === data.category);
+  const { type, name, coin, date, amountFormatted } = data;
 
   return (
     <Container>
       <Title>{name}</Title>
-      <Amount type={type}>{type === 'negative' ? '- ' + amount : amount}</Amount>
+      <Amount type={type}>{type === 'negative' ? '- ' + amountFormatted : amountFormatted}</Amount>
 
-      {/* <Footer>
-        <Category>
-          <Icon name={category.icon} />
-          <CategoryName>{category.name}</CategoryName>
-        </Category>
-
+      <Footer>
+        <Coin>
+          {coin.image && <CoinImage source={{ uri: coin.image }} /> }
+          <CoinName>{coin.name}</CoinName>
+        </Coin>
         <Date>{date}</Date>
-      </Footer> */}
+      </Footer>
     </Container> 
   );
 };

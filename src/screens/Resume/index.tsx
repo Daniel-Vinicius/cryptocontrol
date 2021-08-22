@@ -16,7 +16,6 @@ import { HistoryCard } from '../../components/HistoryCard';
 
 import { DataListProps } from '../Dashboard';
 
-// import { categories } from '../../utils/categories';
 import { formatToBRL } from '../../utils/formatToBRL';
 
 import {
@@ -32,80 +31,81 @@ import {
   LoadContainer,
 } from './styles';
 
-interface CategoryData {
-  key: string;
+interface CoinData {
+  symbol: string;
   name: string;
   total: number;
   totalFormatted: string;
-  color: string;
   percent: string;
 }
 
 export function Resume() {
-  // const [isLoading, setIsLoading] = useState(false);
-  // const [selectedDate, setSelectedDate] = useState(new Date());
-  // const [totalByCategories, setTotalByCategories] = useState<CategoryData[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [totalByCoin, setTotalByCoin] = useState<CoinData[]>([]);
 
-  // const theme = useTheme();
-  // const { user } = useAuth();
+  const theme = useTheme();
+  const { user } = useAuth();
 
-  // function handleDateChange(action: 'next' | 'prev') {
-  //   if (action === 'next') {
-  //     const newDate = addMonths(selectedDate, 1);
-  //     setSelectedDate(newDate);
-  //   }
+  function handleDateChange(action: 'next' | 'prev') {
+    if (action === 'next') {
+      const newDate = addMonths(selectedDate, 1);
+      setSelectedDate(newDate);
+    }
 
-  //   if (action === 'prev') {
-  //     const newDate = subMonths(selectedDate, 1);
-  //     setSelectedDate(newDate);
-  //   }
-  // }
+    if (action === 'prev') {
+      const newDate = subMonths(selectedDate, 1);
+      setSelectedDate(newDate);
+    }
+  }
 
-  // async function loadData() {
-  //   setIsLoading(true);
-  //   const collectionKeyTransactions = `@gofinances:transactions_user:${user.id}`;
+  async function loadData() {
+    setIsLoading(true);
+    const collectionKeyTransactions = `@cryptocontrol:transactions_user:${user.id}`;
 
-  //   const response = await AsyncStorage.getItem(collectionKeyTransactions);
-  //   const transactionsParsed = response ? JSON.parse(response) as DataListProps[] : [];
+    const response = await AsyncStorage.getItem(collectionKeyTransactions);
+    const transactionsParsed = response ? JSON.parse(response) as Omit<DataListProps, "amountFormatted" | "amount">[] : [];
 
-  //   const outputs = transactionsParsed.filter(transaction =>
-  //     transaction.type === 'negative' &&
-  //     new Date(transaction.date).getMonth() === selectedDate.getMonth() &&
-  //     new Date(transaction.date).getFullYear() === selectedDate.getFullYear()
-  //   );
+    const sales = transactionsParsed.filter(transaction =>
+      transaction.type === 'negative' &&
+      new Date(transaction.date).getMonth() === selectedDate.getMonth() &&
+      new Date(transaction.date).getFullYear() === selectedDate.getFullYear()
+    );
 
-  //   const outputsTotal = outputs.reduce((accumulator, output) => {
-  //     return accumulator + Number(output.amount);
-  //   }, 0);
+    const outputsTotal = sales.reduce((accumulator, sale) => {
+      const amount = sale.coin.quantity * sale.coin.price;
 
-  //   const totalByCategory: CategoryData[] = [];
+      return accumulator + Number(amount);
+    }, 0);
 
-  //   categories.forEach(category => {
-  //     let categorySum = 0;
+    // const totalByCategory: CategoryData[] = [];
 
-  //     outputs.forEach(output => {
-  //       if (output.category === category.key) {
-  //         categorySum += Number(output.amount);
-  //       }
-  //     })
+    // categories.forEach(category => {
+    //   let categorySum = 0;
 
-  //     if (categorySum > 0) {
-  //       const percent = `${(categorySum / outputsTotal * 100).toFixed(1)}%`;
+    //   outputs.forEach(output => {
+    //     if (output.category === category.key) {
+    //       categorySum += Number(output.amount);
+    //     }
+    //   })
 
-  //       totalByCategory.push({
-  //         key: category.key,
-  //         name: category.name,
-  //         total: categorySum,
-  //         totalFormatted: formatToBRL(categorySum),
-  //         color: category.color,
-  //         percent,
-  //       });
-  //     }
-  //   });
+    //   if (categorySum > 0) {
+    //     const percent = `${(categorySum / outputsTotal * 100).toFixed(1)}%`;
 
-  //   setTotalByCategories(totalByCategory);
-  //   setIsLoading(false);
-  // }
+    //     totalByCategory.push({
+    //       key: category.key,
+    //       name: category.name,
+    //       total: categorySum,
+    //       totalFormatted: formatToBRL(categorySum),
+    //       color: category.color,
+    //       percent,
+    //     });
+    //   }
+    // });
+
+    // setTotalByCategories(totalByCategory);
+    setIsLoading(false);
+  }
 
   // useFocusEffect(
   //   useCallback(() => {

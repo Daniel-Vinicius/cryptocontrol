@@ -42,3 +42,22 @@ export const TransactionTypes = styled.View`
   margin-top: 8px;
   margin-bottom: 16px;
 `;
+
+export const TotalValueContainer = styled.Text`
+  margin-top: 16px;
+  background-color: ${({ theme }) => theme.colors.shape};
+
+  padding: 16px 18px;
+
+  border-radius: 5px;
+  margin-bottom: 8px;
+
+  color: ${({ theme }) => theme.colors.text};
+`;
+
+export const TotalValue = styled.Text`
+  font-family: ${({ theme }) => theme.fonts.bold};
+  font-size: ${RFValue(14)}px;
+
+  color: ${({ theme }) => theme.colors.title};
+`;

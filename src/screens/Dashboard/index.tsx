@@ -32,6 +32,8 @@ import {
 
 export interface DataListProps extends ITransactionCard {
   id: string;
+  amount: number;
+  amountFormatted: string;
 }
 
 interface HighlightProps {
@@ -40,8 +42,8 @@ interface HighlightProps {
 }
 
 interface HighlightData {
-  entries: HighlightProps;
-  outputs: HighlightProps;
+  purchases: HighlightProps;
+  sales: HighlightProps;
   total: HighlightProps;
 }
 
@@ -54,63 +56,66 @@ export function Dashboard() {
   const { signOut, user } = useAuth();
 
   async function loadTransactions() {
-    const collectionKeyTransactions = `@gofinances:transactions_user:${user.id}`;
+    const collectionKeyTransactions = `@cryptocontrol:transactions_user:${user.id}`;
 
     const transactionsStringified = await AsyncStorage.getItem(collectionKeyTransactions);
     const transactionsParsed = transactionsStringified ? JSON.parse(transactionsStringified) : [];
 
-    let entriesTotal = 0;
-    let outputsTotal = 0;
+    let purchasesTotal = 0;
+    let salesTotal = 0;
 
-    const transactionsFormatted: DataListProps[] = transactionsParsed.map((item: DataListProps) => {
-      if (item.type === 'positive') {
-        entriesTotal += Number(item.amount);
+    const transactionsFormatted: DataListProps[] = transactionsParsed.map((transaction: Omit<DataListProps, "amountFormatted" | "amount">) => {
+      const amount = transaction.coin.quantity * transaction.coin.price;
+
+      if (transaction.type === 'positive') {
+        purchasesTotal += Number(amount);
       }
 
-      if (item.type === 'negative') {
-        outputsTotal += Number(item.amount);
+      if (transaction.type === 'negative') {
+        salesTotal += Number(amount);
       }
 
-      const amount = formatToBRL(Number(item.amount));
+      const amountFormatted = formatToBRL(Number(amount));
 
       const date = Intl.DateTimeFormat('pt-BR', {
         day: '2-digit',
         month: '2-digit',
         year: 'numeric'
-      }).format(new Date(item.date));
+      }).format(new Date(transaction.date));
 
       return {
-        id: item.id,
-        name: item.name,
+        id: transaction.id,
+        name: transaction.name,
+        type: transaction.type,
         amount,
-        type: item.type,
-        category: item.category,
+        amountFormatted,
         date,
+        coin: transaction.coin,
       };
     });
 
     setTransactions(transactionsFormatted);
     
-    const total = entriesTotal - outputsTotal;
+    const total = purchasesTotal - salesTotal;
 
-    const formattedDateLastEntry = getLastTransactionDate(transactionsParsed, 'positive');
-    const formattedDateLastOutput = getLastTransactionDate(transactionsParsed, 'negative');
-    const totalInterval = `01 à ${formattedDateLastOutput || formattedDateLastEntry}`;
+    const formattedDateLastPurchase = getLastTransactionDate(transactionsParsed, 'positive');
+    const formattedDateLastSale = getLastTransactionDate(transactionsParsed, 'negative');
+    const totalInterval = `01 à ${formattedDateLastSale || formattedDateLastPurchase}`;
     
     setHighlightData({
-      entries: {
-        amount: formatToBRL(entriesTotal),
-        dateLastTransaction: formattedDateLastEntry ?
-        `Última entrada dia ${formattedDateLastEntry}` : 'Não há entradas' 
+      purchases: {
+        amount: formatToBRL(purchasesTotal),
+        dateLastTransaction: formattedDateLastPurchase ?
+        `Última compra dia ${formattedDateLastPurchase}` : 'Não há compras' 
       },
-      outputs: {
-        amount: formatToBRL(outputsTotal),
-        dateLastTransaction: formattedDateLastOutput ?
-        `Última saída dia ${formattedDateLastOutput}` : 'Não há saídas'
+      sales: {
+        amount: formatToBRL(salesTotal),
+        dateLastTransaction: formattedDateLastSale ?
+        `Última venda dia ${formattedDateLastSale}` : 'Não há vendas'
       },
       total: {
         amount: formatToBRL(total),
-        dateLastTransaction: formattedDateLastOutput || formattedDateLastEntry ?
+        dateLastTransaction: formattedDateLastSale || formattedDateLastPurchase ?
         totalInterval : 'Não há transações'
       }
     });
@@ -153,15 +158,15 @@ export function Dashboard() {
             <HighlightCard
               type="up"
               title="Compras"
-              amount={highlightData.entries.amount}
-              lastTransaction={highlightData.entries.dateLastTransaction}
+              amount={highlightData.purchases.amount}
+              lastTransaction={highlightData.purchases.dateLastTransaction}
             />
 
             <HighlightCard
               type="down"
               title="Vendas"
-              amount={highlightData.outputs.amount}
-              lastTransaction={highlightData.outputs.dateLastTransaction}
+              amount={highlightData.sales.amount}
+              lastTransaction={highlightData.sales.dateLastTransaction}
             />
 
             <HighlightCard

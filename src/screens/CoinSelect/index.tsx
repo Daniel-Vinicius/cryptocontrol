@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { FlatList } from 'react-native';
+import { ActivityIndicator, FlatList } from 'react-native';
+import { useTheme } from 'styled-components';
 
 import { Button } from '../../components/Form/Button';
+import { Input } from '../../components/Form/Input';
 
 import {
   Container,
   Header,
   Title,
-  Category,
+  Coin,
   Name,
   Separator,
   Footer,
+  LoadContainer,
 } from './styles';
 
 interface Coin {
@@ -28,10 +31,29 @@ interface Props {
 }
 
 export function CoinSelect({ coin, setCoin, closeSelectCoin }: Props) {
+  const [isLoading, setIsLoading] = useState(true);
+  const [coinSearch, setCoinSearch] = useState('');
+  const [coinsBackup, setCoinsBackup] = useState<Coin[]>([]);
   const [coins, setCoins] = useState<Coin[]>([]);
+
+  const theme = useTheme();
 
   function handleCoinSelect(item: Coin) {
     setCoin(item);
+  }
+
+  function handleChangeCoinSearch(text: string) {
+    if (!text.trim()) {
+      setCoins(coinsBackup);
+    }
+
+    setCoinSearch(text);
+
+    if (coinSearch.trim()) {
+      const term = coinSearch.toLowerCase();
+      const coinsFiltered = coinsBackup.filter(coin => coin.name.toLowerCase().indexOf(term) > -1);
+      setCoins(coinsFiltered);
+    }
   }
 
   async function loadCoins() {
@@ -52,7 +74,9 @@ export function CoinSelect({ coin, setCoin, closeSelectCoin }: Props) {
     });
 
     setCoins(coinsFormatted);
-    console.log("loadCoins")
+    setCoinsBackup(coinsFormatted);
+
+    setIsLoading(false);
   }
 
   useEffect(() => {
@@ -66,24 +90,33 @@ export function CoinSelect({ coin, setCoin, closeSelectCoin }: Props) {
           Categoria
         </Title>
       </Header>
-      <FlatList
-        data={coins}
-        style={{ flex: 1, width: '100%' }}
-        keyExtractor={(item) => item.id}
-        ItemSeparatorComponent={() => <Separator />}
-        renderItem={({ item }) => (
-          <Category
-            onPress={() => handleCoinSelect(item)}
-            isActive={coin.id === item.id}
-          >
-            <Name>{item.name}</Name>
-          </Category>
-        )}
-      />
+      {isLoading ? (
+        <LoadContainer>
+          <ActivityIndicator color={theme.colors.secondary} size="large" />
+        </LoadContainer>
+      ) :
+        <>
+          <Input placeholder="Nome da Moeda" value={coinSearch} onChangeText={handleChangeCoinSearch} />
+          <FlatList
+            data={coins}
+            style={{ flex: 1, width: '100%' }}
+            keyExtractor={(item) => item.id}
+            ItemSeparatorComponent={() => <Separator />}
+            renderItem={({ item }) => (
+              <Coin
+                onPress={() => handleCoinSelect(item)}
+                isActive={coin.id === item.id}
+              >
+                <Name>{item.name}</Name>
+              </Coin>
+            )}
+          />
 
-      <Footer>
-        <Button title="Selecionar" onPress={closeSelectCoin} />
-      </Footer>
+          <Footer>
+            <Button title="Selecionar" onPress={closeSelectCoin} />
+          </Footer>
+        </>
+      }
     </Container>
   );
 };

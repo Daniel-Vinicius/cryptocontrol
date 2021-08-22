@@ -31,7 +31,7 @@ export const Title = styled.Text`
   color: ${({ theme }) => theme.colors.shape};
 `;
 
-export const Category = styled.TouchableOpacity<CoinProps>`
+export const Coin = styled.TouchableOpacity<CoinProps>`
   width: 100%;
   padding: ${RFValue(15)}px;
 
@@ -60,4 +60,10 @@ export const Separator = styled.View`
 export const Footer = styled.View`
   width: 100%;
   padding: 24px;
+`;
+
+export const LoadContainer = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
 `;
