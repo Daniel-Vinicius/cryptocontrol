@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Keyboard,
   Alert,
@@ -18,9 +18,9 @@ import uuid from 'react-native-uuid';
 import { InputForm } from '../../components/Form/InputForm';
 import { Button } from '../../components/Form/Button';
 import { TransactionTypeButton } from '../../components/Form/TransactionTypeButton';
-import { CategorySelectButton } from '../../components/Form/CategorySelectButton';
+import { CoinSelectButton } from '../../components/Form/CoinSelectButton';
 
-import { CategorySelect } from '../CategorySelect';
+import { CoinSelect } from '../CoinSelect';
 
 import {
   Container,
@@ -33,7 +33,15 @@ import {
 
 interface FormData {
   name: string;
-  amount: string;
+  quantity: string;
+}
+
+interface Coin {
+  id: string;
+  symbol: string;
+  name: string;
+  image?: string;
+  current_price: number;
 }
 
 type NavigationProps = {
@@ -42,7 +50,7 @@ type NavigationProps = {
 
 const schema = Yup.object().shape({
   name: Yup.string().required('Nome é obrigatório'),
-  amount: Yup.number()
+  quantity: Yup.number()
     .typeError('Informe um valor numérico')
     .positive('O valor deve ser positivo')
     .required('Valor é obrigatório')
@@ -50,11 +58,14 @@ const schema = Yup.object().shape({
 
 export function Register() {
   const [transactionType, setTransactionType] = useState('');
-  const [categoryModalOpen, setCategoryModalOpen] = useState(false);
+  const [coinModalOpen, setCoinModalOpen] = useState(false);
   
-  const [category, setCategory] = useState({
-    key: 'category',
-    name: 'Categoria',
+  const [coin, setCoin] = useState<Coin>({
+    id: 'coin',
+    symbol: 'coin',
+    name: 'Moeda',
+    image: '',
+    current_price: 0,
   });
   
   const navigation = useNavigation<NavigationProps>();
@@ -68,12 +79,12 @@ export function Register() {
     setTransactionType(type);
   }
 
-  function handleOpenSelectCategoryModal() {
-    setCategoryModalOpen(true);
+  function handleOpenSelectCoinModal() {
+    setCoinModalOpen(true);
   }
 
-  function handleCloseSelectCategoryModal() {
-    setCategoryModalOpen(false);
+  function handleCloseSelectCoinModal() {
+    setCoinModalOpen(false);
   }
 
   async function handleRegister(form: FormData) {
@@ -81,8 +92,8 @@ export function Register() {
       return Alert.alert('Selecione o tipo da transação.');
     }
 
-    if (category.key === "category") {
-      return Alert.alert('Selecione a categoria.');
+    if (coin.id === "coin") {
+      return Alert.alert('Selecione a moeda.');
     }
 
     const collectionKeyTransactions = `@gofinances:transactions_user:${user.id}`;
@@ -90,9 +101,9 @@ export function Register() {
     const newTransaction = {
       id: String(uuid.v4()),
       name: form.name,
-      amount: form.amount,
+      quantity: form.quantity,
       type: transactionType,
-      category: category.key,
+      category: coin.id,
       date: new Date(),
     };
 
@@ -106,7 +117,7 @@ export function Register() {
 
       reset();
       setTransactionType('');
-      setCategory({ key: 'category', name: 'Categoria' });
+      setCoin({ id: 'coin', symbol: 'coin', name: 'Moeda', image: '', current_price: 0 });
 
       navigation.navigate('Listagem');
     } catch (error) {
@@ -114,6 +125,10 @@ export function Register() {
       Alert.alert("Não foi possível salvar");
     }
   }
+
+  useEffect(() => {
+    console.log(coin)
+  }, [coin])
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -135,10 +150,10 @@ export function Register() {
 
             <InputForm
               control={control}
-              name="amount"
-              placeholder="Valor"
+              name="quantity"
+              placeholder="Quantidade"
               keyboardType="numeric"
-              error={errors.amount && errors.amount.message}
+              error={errors.quantity && errors.quantity.message}
             />
 
             <TransactionTypes>
@@ -157,17 +172,17 @@ export function Register() {
               />
             </TransactionTypes>
 
-            <CategorySelectButton title={category.name} onPress={handleOpenSelectCategoryModal} />
+            <CoinSelectButton title={coin.name} onPress={handleOpenSelectCoinModal} />
           </Fields>
 
           <Button title="Enviar" onPress={handleSubmit(handleRegister)} />
         </Form>
 
-        <Modal visible={categoryModalOpen}>
-          <CategorySelect
-            category={category}
-            setCategory={setCategory}
-            closeSelectCategory={handleCloseSelectCategoryModal}
+        <Modal visible={coinModalOpen}>
+          <CoinSelect
+            coin={coin}
+            setCoin={setCoin}
+            closeSelectCoin={handleCloseSelectCoinModal}
           />
         </Modal>
       </Container>

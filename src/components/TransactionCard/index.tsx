@@ -34,14 +34,14 @@ export function TransactionCard({ data }: TransactionCardProps) {
       <Title>{name}</Title>
       <Amount type={type}>{type === 'negative' ? '- ' + amount : amount}</Amount>
 
-      <Footer>
+      {/* <Footer>
         <Category>
           <Icon name={category.icon} />
           <CategoryName>{category.name}</CategoryName>
         </Category>
 
         <Date>{date}</Date>
-      </Footer>
+      </Footer> */}
     </Container> 
   );
 };

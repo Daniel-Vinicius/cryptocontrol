@@ -152,14 +152,14 @@ export function Dashboard() {
           <HighlightCards>
             <HighlightCard
               type="up"
-              title="Entradas"
+              title="Compras"
               amount={highlightData.entries.amount}
               lastTransaction={highlightData.entries.dateLastTransaction}
             />
 
             <HighlightCard
               type="down"
-              title="Saídas"
+              title="Vendas"
               amount={highlightData.outputs.amount}
               lastTransaction={highlightData.outputs.dateLastTransaction}
             />

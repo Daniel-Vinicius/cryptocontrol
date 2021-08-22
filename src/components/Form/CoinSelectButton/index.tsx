@@ -6,12 +6,12 @@ import {
   Icon,
 } from './styles';
 
-interface CategorySelectButtonProps {
+interface CoinSelectButtonProps {
   title: string;
   onPress: () => void;
 }
 
-export function CategorySelectButton({ title, onPress }: CategorySelectButtonProps) {
+export function CoinSelectButton({ title, onPress }: CoinSelectButtonProps) {
   return (
     <Container onPress={onPress}>
       <Category>{title}</Category>

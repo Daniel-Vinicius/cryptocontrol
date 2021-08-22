@@ -16,7 +16,7 @@ import { HistoryCard } from '../../components/HistoryCard';
 
 import { DataListProps } from '../Dashboard';
 
-import { categories } from '../../utils/categories';
+// import { categories } from '../../utils/categories';
 import { formatToBRL } from '../../utils/formatToBRL';
 
 import {
@@ -42,83 +42,83 @@ interface CategoryData {
 }
 
 export function Resume() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const [totalByCategories, setTotalByCategories] = useState<CategoryData[]>([]);
+  // const [isLoading, setIsLoading] = useState(false);
+  // const [selectedDate, setSelectedDate] = useState(new Date());
+  // const [totalByCategories, setTotalByCategories] = useState<CategoryData[]>([]);
 
-  const theme = useTheme();
-  const { user } = useAuth();
+  // const theme = useTheme();
+  // const { user } = useAuth();
 
-  function handleDateChange(action: 'next' | 'prev') {
-    if (action === 'next') {
-      const newDate = addMonths(selectedDate, 1);
-      setSelectedDate(newDate);
-    }
+  // function handleDateChange(action: 'next' | 'prev') {
+  //   if (action === 'next') {
+  //     const newDate = addMonths(selectedDate, 1);
+  //     setSelectedDate(newDate);
+  //   }
 
-    if (action === 'prev') {
-      const newDate = subMonths(selectedDate, 1);
-      setSelectedDate(newDate);
-    }
-  }
+  //   if (action === 'prev') {
+  //     const newDate = subMonths(selectedDate, 1);
+  //     setSelectedDate(newDate);
+  //   }
+  // }
 
-  async function loadData() {
-    setIsLoading(true);
-    const collectionKeyTransactions = `@gofinances:transactions_user:${user.id}`;
+  // async function loadData() {
+  //   setIsLoading(true);
+  //   const collectionKeyTransactions = `@gofinances:transactions_user:${user.id}`;
 
-    const response = await AsyncStorage.getItem(collectionKeyTransactions);
-    const transactionsParsed = response ? JSON.parse(response) as DataListProps[] : [];
+  //   const response = await AsyncStorage.getItem(collectionKeyTransactions);
+  //   const transactionsParsed = response ? JSON.parse(response) as DataListProps[] : [];
 
-    const outputs = transactionsParsed.filter(transaction =>
-      transaction.type === 'negative' &&
-      new Date(transaction.date).getMonth() === selectedDate.getMonth() &&
-      new Date(transaction.date).getFullYear() === selectedDate.getFullYear()
-    );
+  //   const outputs = transactionsParsed.filter(transaction =>
+  //     transaction.type === 'negative' &&
+  //     new Date(transaction.date).getMonth() === selectedDate.getMonth() &&
+  //     new Date(transaction.date).getFullYear() === selectedDate.getFullYear()
+  //   );
 
-    const outputsTotal = outputs.reduce((accumulator, output) => {
-      return accumulator + Number(output.amount);
-    }, 0);
+  //   const outputsTotal = outputs.reduce((accumulator, output) => {
+  //     return accumulator + Number(output.amount);
+  //   }, 0);
 
-    const totalByCategory: CategoryData[] = [];
+  //   const totalByCategory: CategoryData[] = [];
 
-    categories.forEach(category => {
-      let categorySum = 0;
+  //   categories.forEach(category => {
+  //     let categorySum = 0;
 
-      outputs.forEach(output => {
-        if (output.category === category.key) {
-          categorySum += Number(output.amount);
-        }
-      })
+  //     outputs.forEach(output => {
+  //       if (output.category === category.key) {
+  //         categorySum += Number(output.amount);
+  //       }
+  //     })
 
-      if (categorySum > 0) {
-        const percent = `${(categorySum / outputsTotal * 100).toFixed(1)}%`;
+  //     if (categorySum > 0) {
+  //       const percent = `${(categorySum / outputsTotal * 100).toFixed(1)}%`;
 
-        totalByCategory.push({
-          key: category.key,
-          name: category.name,
-          total: categorySum,
-          totalFormatted: formatToBRL(categorySum),
-          color: category.color,
-          percent,
-        });
-      }
-    });
+  //       totalByCategory.push({
+  //         key: category.key,
+  //         name: category.name,
+  //         total: categorySum,
+  //         totalFormatted: formatToBRL(categorySum),
+  //         color: category.color,
+  //         percent,
+  //       });
+  //     }
+  //   });
 
-    setTotalByCategories(totalByCategory);
-    setIsLoading(false);
-  }
+  //   setTotalByCategories(totalByCategory);
+  //   setIsLoading(false);
+  // }
 
-  useFocusEffect(
-    useCallback(() => {
-      loadData()
-    }, [selectedDate])
-  )
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     loadData()
+  //   }, [selectedDate])
+  // )
 
   return (
     <Container>
       <Header>
         <Title>Resumo por categoria</Title>
       </Header>
-
+{/* 
       {isLoading ? (
         <LoadContainer>
           <ActivityIndicator color={theme.colors.secondary} size="large" />
@@ -168,7 +168,7 @@ export function Resume() {
             />
           ))}
         </Content>
-      )}
+      )} */}
     </Container>
   );
 };

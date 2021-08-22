@@ -4,7 +4,7 @@ import { RFValue } from 'react-native-responsive-fontsize';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Feather } from '@expo/vector-icons';
 
-interface CategoryProps {
+interface CoinProps {
   isActive: boolean;
 }
 
@@ -31,7 +31,7 @@ export const Title = styled.Text`
   color: ${({ theme }) => theme.colors.shape};
 `;
 
-export const Category = styled.TouchableOpacity<CategoryProps>`
+export const Category = styled.TouchableOpacity<CoinProps>`
   width: 100%;
   padding: ${RFValue(15)}px;
 
