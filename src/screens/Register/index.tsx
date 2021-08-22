@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+
 import {
   Keyboard,
   Alert,
@@ -14,7 +15,7 @@ import { useAuth } from '../../hooks/auth';
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import uuid from 'react-native-uuid';
-import { formatToBRL } from '../../utils/formatToBRL';
+import { formatToUSD } from '../../utils/formatToUSD';
 
 import { InputForm } from '../../components/Form/InputForm';
 import { Button } from '../../components/Form/Button';
@@ -62,6 +63,7 @@ const schema = Yup.object().shape({
 export function Register() {
   const [transactionType, setTransactionType] = useState('');
   const [coinModalOpen, setCoinModalOpen] = useState(false);
+  const [totalValue, setTotalValue] = useState(0);
 
   const [coin, setCoin] = useState<Coin>({
     id: 'coin',
@@ -74,7 +76,7 @@ export function Register() {
   const navigation = useNavigation<NavigationProps>();
   const { user } = useAuth();
 
-  const { control, handleSubmit, reset, getValues, formState: { errors } } = useForm({
+  const { control, handleSubmit, reset, watch, formState: { errors } } = useForm({
     resolver: yupResolver(schema)
   });
 
@@ -135,8 +137,13 @@ export function Register() {
     }
   }
 
-  const { quantity } = getValues();
-  const totalValue = Number(quantity) * coin.current_price;
+
+  const quantityWatch = watch("quantity");
+
+  useEffect(() => {
+    const totalValue = Number(quantityWatch) * coin.current_price;
+    setTotalValue(totalValue);
+  }, [quantityWatch, coin.current_price]);
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -181,11 +188,11 @@ export function Register() {
             </TransactionTypes>
 
             <CoinSelectButton title={coin.name} onPress={handleOpenSelectCoinModal} />
-            {coin.current_price !== 0 && quantity && (
+            {coin.current_price !== 0 && (
               <TotalValueContainer>
                 Valor total de{' '}
                 <TotalValue>
-                  {formatToBRL(totalValue)}
+                  {formatToUSD(totalValue)}
                 </TotalValue>
               </TotalValueContainer>
             )}
