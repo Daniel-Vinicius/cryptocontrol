@@ -6,7 +6,7 @@ import { useTheme } from 'styled-components';
 import { useFocusEffect } from '@react-navigation/core';
 import { useAuth } from '../../hooks/auth';
 
-import { formatToBRL } from '../../utils/formatToBRL';
+import { formatToUSD } from '../../utils/formatToUSD';
 import { getLastTransactionDate } from '../../utils/getLastTransactionDate';
 
 import { HighlightCard } from '../../components/HighlightCard';
@@ -75,7 +75,7 @@ export function Dashboard() {
         salesTotal += Number(amount);
       }
 
-      const amountFormatted = formatToBRL(Number(amount));
+      const amountFormatted = formatToUSD(Number(amount));
 
       const date = Intl.DateTimeFormat('pt-BR', {
         day: '2-digit',
@@ -104,17 +104,17 @@ export function Dashboard() {
     
     setHighlightData({
       purchases: {
-        amount: formatToBRL(purchasesTotal),
+        amount: formatToUSD(purchasesTotal),
         dateLastTransaction: formattedDateLastPurchase ?
         `Última compra dia ${formattedDateLastPurchase}` : 'Não há compras' 
       },
       sales: {
-        amount: formatToBRL(salesTotal),
+        amount: formatToUSD(salesTotal),
         dateLastTransaction: formattedDateLastSale ?
         `Última venda dia ${formattedDateLastSale}` : 'Não há vendas'
       },
       total: {
-        amount: formatToBRL(total),
+        amount: formatToUSD(total),
         dateLastTransaction: formattedDateLastSale || formattedDateLastPurchase ?
         totalInterval : 'Não há transações'
       }

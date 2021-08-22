@@ -16,7 +16,7 @@ import { HistoryCard } from '../../components/HistoryCard';
 
 import { DataListProps } from '../Dashboard';
 
-import { formatToBRL } from '../../utils/formatToBRL';
+import { formatToUSD } from '../../utils/formatToUSD';
 
 import {
   Container,
@@ -96,7 +96,7 @@ export function Resume() {
     //       key: category.key,
     //       name: category.name,
     //       total: categorySum,
-    //       totalFormatted: formatToBRL(categorySum),
+    //       totalFormatted: formatToUSD(categorySum),
     //       color: category.color,
     //       percent,
     //     });
