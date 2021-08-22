@@ -1,13 +1,13 @@
 {
   "expo": {
-    "name": "Go Finances",
-    "slug": "gofinances",
-    "scheme": "gofinances",
+    "name": "Crypto Control",
+    "slug": "cryptocontrol",
+    "scheme": "cryptocontrol",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "description": "Controle suas finanças de forma muito simples!",
-    "githubUrl": "https://github.com/Daniel-Vinicius/Ignite-React-Native/tree/main/02_gofinances",
+    "description": "Controle suas cryptos de forma muito simples!",
+    "githubUrl": "https://github.com/Daniel-Vinicius/cryptocontrol",
     "assetBundlePatterns": [
       "**/*"
     ],
@@ -18,11 +18,11 @@
       },
       "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.dan.gofinances",
+      "bundleIdentifier": "com.dan.cryptocontrol",
       "buildNumber": "1.0.0"
     },
     "android": {
-      "package": "com.dan.gofinances",
+      "package": "com.dan.cryptocontrol",
       "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
