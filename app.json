@@ -1,0 +1,33 @@
+{
+  "expo": {
+    "name": "Go Finances",
+    "slug": "gofinances",
+    "scheme": "gofinances",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "description": "Controle suas finanças de forma muito simples!",
+    "githubUrl": "https://github.com/Daniel-Vinicius/Ignite-React-Native/tree/main/02_gofinances",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "splash": {
+       "image": "./assets/splash.png",
+       "resizeMode": "contain",
+       "backgroundColor": "#5636d3"
+      },
+      "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.dan.gofinances",
+      "buildNumber": "1.0.0"
+    },
+    "android": {
+      "package": "com.dan.gofinances",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#5636d3"
+      }
+    }
+  }
+}
