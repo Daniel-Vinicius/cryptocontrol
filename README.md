@@ -1,75 +1,32 @@
-<h1 align="center">
-    <img alt="Gofinances" title="Gofinances" src="https://svgshare.com/i/_GB.svg" />
-</h1>
+# CryptoControl
 
-<p align="center">
-  <img  src="https://img.shields.io/static/v1?label=license&message=MIT&color=FFFFFF&labelColor=32B768" alt="License">
-  <img src="https://img.shields.io/github/forks/Daniel-Vinicius/Ignite-React-Native?label=forks&message=MIT&color=FFFFFF&labelColor=32B768" alt="Forks">
-  <img src="https://img.shields.io/github/stars/Daniel-Vinicius/Ignite-React-Native?label=stars&message=MIT&color=FFFFFF&labelColor=32B768" alt="Stars">
-</p>
 
-<br>
+* **Ver quanto dinheiro você tem atualmente nos cards da home (Com os valores na hora da compra e com os valores atualizados da API).**
 
-<p align="center">
-  <img alt="Gofinances" src="https://user-images.githubusercontent.com/66279500/129810090-cd663459-2602-4e09-a2ad-89fc29c5bb16.png">
-</p>
+<div align="center">
+<img src="https://s3.us-west-2.amazonaws.com/secure.notion-static.com/980acb97-93e8-4196-8d8b-e5310b29ef82/Untitled.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAT73L2G45O3KS52Y5%2F20210824%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20210824T224832Z&X-Amz-Expires=86400&X-Amz-Signature=cd2639aaa1ed29c68ce6e6df51fcffda0f0e7ecc3b5535708d7d6646985a1379&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%22Untitled.png%22" />
+</div>
 
 ---
 
-## 💻 Projeto
+- **Criar uma tela pra calcular por moeda o preço que você comprou (com mais de um card) e mostrar se você está ganhando e quanto está ganhando.**
 
-- Controle suas finanças de forma muito simples 💵
-
-- Este é um projeto desenvolvido durante o curso **[Ignite](https://rocketseat.com.br/ignite)**, feito pela **[@Rocketseat](https://github.com/Rocketseat)** na trilha React Native
-
-- [APK para download no Android](https://drive.google.com/file/d/1CtUZPcjXsqdlEAcd_nVIxeHeOSi0Yad_/view?uspsharing)
-- [Projeto no Expo para teste](https://auth.expo.io/@danielviana/gofinances)
+<div align="center">
+<img src="https://i.imgur.com/WneXpkM.png" />
+</div>
 
 ---
 
-### Instalação
+- Digitar Id da moeda e pegar a cotação na hora do cadastro [API ENDPOINT](https://api.coingecko.com/api/v3/coins/ethereum?localization=pt&tickers=false).
 
-```zsh
-# Clone esse repositório
-git clone https://github.com/Daniel-Vinicius/Ignite-React-Native
-
-# Entre na pasta do projeto
-cd Ignite-React-Native/02_gofinances
-
-# Instale as dependências
-yarn install
-
-# Execute o projeto
-expo start
-```
+<div align="center">
+<img src="https://i.imgur.com/9jsxRSp.png" />
+</div>
 
 ---
 
-## ⛏️ Ferramentas usadas <a name = "built_using"></a>
-
-- [React Native](https://reactnative.dev/)
-- [Styled-Components](https://styled-components.com/)
-- [React Native Gesture Handler](https://docs.swmansion.com/react-native-gesture-handler/)
-- [React Navigation](https://reactnavigation.org/)
-- [React Hook Form](https://react-hook-form.com/)
-- [Yup](https://github.com/jquense/yup)
-- [Typescript](https://www.typescriptlang.org/)
-- [Expo](https://expo.io/)
+- Na hora de digitar a quantidade substituir a vírgula por ponto.
 
 ---
 
-## 🔖 Layout
-
-Você pode visualizar o layout do projeto através do link abaixo:
-
-- [Layout](https://www.figma.com/file/JR5VH3xQsAG3eRPhEOp4wY/GoFinances/duplicate)
-
-Lembrando que você precisa ter uma conta no [Figma](http://figma.com/) para acessá-lo.
-
----
-
-## 📝 License
-
-Este projeto está licenciado sob a Licença MIT. Veja o [LICENSE](LICENSE) para detalhes.
-
-Feito com 💜 por [Daniel Vinícius](https://github.com/Daniel-Vinicius) 👋
+- Subtrair no gráfico e nos cards
