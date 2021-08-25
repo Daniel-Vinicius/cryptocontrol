@@ -141,7 +141,8 @@ export function Register() {
   const quantityWatch = watch("quantity");
 
   useEffect(() => {
-    const totalValue = Number(quantityWatch) * coin.current_price;
+    const quantity = String(quantityWatch).replace(',', '.');
+    const totalValue = Number(quantity) * coin.current_price;
     setTotalValue(totalValue);
   }, [quantityWatch, coin.current_price]);
 
