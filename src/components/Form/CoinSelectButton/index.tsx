@@ -2,19 +2,21 @@ import React from 'react';
 
 import {
   Container,
-  Category,
+  Coin,
   Icon,
 } from './styles';
 
 interface CoinSelectButtonProps {
   title: string;
   onPress: () => void;
+  onLongPress?: () => void;
 }
 
-export function CoinSelectButton({ title, onPress }: CoinSelectButtonProps) {
+export function CoinSelectButton({ title, onPress, onLongPress }: CoinSelectButtonProps) {
+
   return (
-    <Container onPress={onPress}>
-      <Category>{title}</Category>
+    <Container onPress={onPress} onLongPress={onLongPress}>
+      <Coin>{title}</Coin>
       <Icon name="chevron-down" />
     </Container>
   );

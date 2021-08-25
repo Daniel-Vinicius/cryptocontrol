@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { ActivityIndicator, FlatList } from 'react-native';
+import { ActivityIndicator, Alert, FlatList } from 'react-native';
 import { useTheme } from 'styled-components';
 
 import { Button } from '../../components/Form/Button';
 import { Input } from '../../components/Form/Input';
+import { getCoinDataNow } from '../../utils/getCoinDataNow';
 
 import {
   Container,
@@ -42,7 +43,21 @@ export function CoinSelect({ coin, setCoin, closeSelectCoin }: Props) {
     setCoin(item);
   }
 
-  function handleChangeCoinSearch(text: string) {
+  async function handleSearchCoinInAPI() {
+    if (coinSearch.trim()) {
+      const coinNotListed = await getCoinDataNow(coinSearch.substring(1));
+
+      if (!coinNotListed) {
+        setCoins(coinsBackup);
+        return Alert.alert('Moeda não encontrada', 'Verifique se API id da moeda no coingecko está correto.')
+      }
+
+      setCoin(coinNotListed);
+      closeSelectCoin();
+    }
+  }
+
+  async function handleChangeCoinSearch(text: string) {
     if (!text.trim()) {
       setCoins(coinsBackup);
     }
@@ -83,6 +98,8 @@ export function CoinSelect({ coin, setCoin, closeSelectCoin }: Props) {
     loadCoins();
   }, []);
 
+  const isSearchingNotListedCoin = coinSearch.charAt(0) === "#";
+
   return (
     <Container>
       <Header>
@@ -113,7 +130,7 @@ export function CoinSelect({ coin, setCoin, closeSelectCoin }: Props) {
           />
 
           <Footer>
-            <Button title="Selecionar" onPress={closeSelectCoin} />
+            <Button title={isSearchingNotListedCoin ? "Buscar moeda" : "Selecionar"} onPress={isSearchingNotListedCoin ? handleSearchCoinInAPI : closeSelectCoin} />
           </Footer>
         </>
       }

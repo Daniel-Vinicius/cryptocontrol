@@ -43,7 +43,7 @@ export function HighlightCardTotal({
 
       <Content>
         <ContentWrapper>
-          <Label>Valor investido</Label>
+          <Label>Valor Investido</Label>
           <Label style={{ marginTop: 12 }}>Valor atual</Label>
         </ContentWrapper>
 

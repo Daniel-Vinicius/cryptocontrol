@@ -88,6 +88,10 @@ export function Register() {
     setCoinModalOpen(true);
   }
 
+  function handleOpenPrompt() {
+    Alert.alert('Não encontrou a moeda que queria?', 'Não tem problema, é só inserir uma # mais o API id da moeda no coingecko na barra de pesquisa por moedas. \n \n Por exemplo "#chia". \n \n https://www.coingecko.com/en/coins/chia')
+  }
+
   function handleCloseSelectCoinModal() {
     setCoinModalOpen(false);
   }
@@ -188,7 +192,7 @@ export function Register() {
               />
             </TransactionTypes>
 
-            <CoinSelectButton title={coin.name} onPress={handleOpenSelectCoinModal} />
+            <CoinSelectButton title={coin.name} onPress={handleOpenSelectCoinModal} onLongPress={handleOpenPrompt} />
             {coin.current_price !== 0 && (
               <TotalValueContainer>
                 Valor total de{' '}
