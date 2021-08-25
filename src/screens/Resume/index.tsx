@@ -74,11 +74,24 @@ export function Resume() {
       new Date(transaction.date).getFullYear() <= selectedDate.getFullYear()
     );
 
+    const sales = transactionsParsed.filter(transaction =>
+      transaction.type === 'negative' &&
+      new Date(transaction.date).getMonth() <= selectedDate.getMonth() &&
+      new Date(transaction.date).getFullYear() <= selectedDate.getFullYear()
+    );
+
     const purchasesTotal = purchases.reduce((accumulator, purchase) => {
       const amount = purchase.coin.quantity * purchase.coin.price;
-
       return accumulator + Number(amount);
     }, 0);
+
+    const salesTotal = sales.reduce((accumulator, purchase) => {
+      const amount = purchase.coin.quantity * purchase.coin.price;
+      return accumulator + Number(amount);
+    }, 0);
+
+
+    const totalBoughtMinusTotalSold = purchasesTotal - salesTotal;
 
     const purchasedCoins = purchases.map(p => p.coin);
 
@@ -94,8 +107,15 @@ export function Resume() {
         }
       })
 
+      sales.forEach(sale => {
+        if (sale.coin.id === coin.id) {
+          const amount = sale.coin.quantity * sale.coin.price;
+          coinSum -= Number(amount);
+        }
+      })
+
       if (coinSum > 0) {
-        const percent = `${(coinSum / purchasesTotal * 100).toFixed(1)}%`;
+        const percent = `${(coinSum / totalBoughtMinusTotalSold * 100).toFixed(1)}%`;
 
         totalByCoins.push({
           name: coin.name,
@@ -121,7 +141,7 @@ export function Resume() {
   return (
     <Container>
       <Header>
-        <Title>Resumo por moeda (Compras)</Title>
+        <Title>Resumo por moeda</Title>
       </Header>
 
       {isLoading ? (
