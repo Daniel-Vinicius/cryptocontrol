@@ -21,12 +21,22 @@ export const Container = styled.View<ContainerProps>`
   margin-bottom: 8px;
 `;
 
+export const Coin = styled.View`
+  flex-direction: row;
+`;
+
 export const Title = styled.Text`
   font-family: ${({ theme }) => theme.fonts.regular};
   font-size: ${RFValue(15)}px;
 `;
 
-export const Amount = styled.Text`
+export const Image = styled.Image`
+  width: 20px;
+  height: 20px;
+  margin-right: ${RFValue(8)}px;
+`;
+
+export const Quantity = styled.Text`
   font-family: ${({ theme }) => theme.fonts.bold};
   font-size: ${RFValue(15)}px;
 `;

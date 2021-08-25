@@ -35,8 +35,10 @@ import {
 interface CoinData {
   symbol: string;
   name: string;
+  image?: string;
   total: number;
   totalFormatted: string;
+  quantity: string;
   percent: string;
   color: string;
 }
@@ -99,11 +101,13 @@ export function Resume() {
 
     purchasedCoins.forEach(coin => {
       let coinSum = 0;
+      let coinQuantity = 0;
 
       purchases.forEach(purchase => {
         if (purchase.coin.id === coin.id) {
           const amount = purchase.coin.quantity * purchase.coin.price;
           coinSum += Number(amount);
+          coinQuantity += purchase.coin.quantity;
         }
       })
 
@@ -111,6 +115,7 @@ export function Resume() {
         if (sale.coin.id === coin.id) {
           const amount = sale.coin.quantity * sale.coin.price;
           coinSum -= Number(amount);
+          coinQuantity -= sale.coin.quantity;
         }
       })
 
@@ -120,8 +125,10 @@ export function Resume() {
         totalByCoins.push({
           name: coin.name,
           symbol: coin.symbol,
+          image: coin.image,
           total: coinSum,
           totalFormatted: formatToUSD(coinSum),
+          quantity: String(coinQuantity),
           percent,
           color: getRandomColor()
         });
@@ -141,7 +148,7 @@ export function Resume() {
   return (
     <Container>
       <Header>
-        <Title>Resumo por moeda</Title>
+        <Title>Divisão dos aportes</Title>
       </Header>
 
       {isLoading ? (
@@ -188,8 +195,9 @@ export function Resume() {
             <HistoryCard
               key={coin.symbol}
               color={coin.color}
+              image={coin.image}
               title={coin.name}
-              amount={coin.totalFormatted}
+              quantity={coin.quantity}
             />
           ))}
         </Content>

@@ -7,9 +7,11 @@ import { useFocusEffect } from '@react-navigation/core';
 import { useAuth } from '../../hooks/auth';
 
 import { formatToUSD } from '../../utils/formatToUSD';
+import { getCoinPriceNow } from '../../utils/getCoinDataNow';
 import { getLastTransactionDate } from '../../utils/getLastTransactionDate';
 
 import { HighlightCard } from '../../components/HighlightCard';
+import { HighlightCardTotal } from '../../components/HighlightCardTotal';
 import { TransactionCard, ITransactionCard } from '../../components/TransactionCard';
 
 import {
@@ -44,14 +46,20 @@ interface HighlightProps {
 interface HighlightData {
   purchases: HighlightProps;
   sales: HighlightProps;
-  total: HighlightProps;
+  total: {
+    profiting: boolean;
+    percentage: string;
+    amountFormatted: string;
+    amountUpdatedFormatted: string;
+    dateLastTransaction: string;
+  };
 }
 
 export function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [highlightData, setHighlightData] = useState<HighlightData>({} as HighlightData);
   const [transactions, setTransactions] = useState<DataListProps[]>([]);
-  
+
   const theme = useTheme();
   const { signOut, user } = useAuth();
 
@@ -95,28 +103,88 @@ export function Dashboard() {
     });
 
     setTransactions(transactionsFormatted);
-    
+
+    const transactionsCoins = transactionsFormatted.map(coin => coin.coin);
+    const coinsNoDuplicates: typeof transactionsCoins = [];
+
+    transactionsCoins.forEach(coin => {
+      if (!coinsNoDuplicates.find(coinNoDuplicated => coinNoDuplicated.id === coin.id)) {
+        coinsNoDuplicates.push(coin);
+      }
+    });
+
+
+    const purchases = transactionsFormatted.filter(transaction => transaction.type === 'positive');
+    const sales = transactionsFormatted.filter(transaction => transaction.type === 'negative');
+
+    const promisesToPopulateArrayWithCoinsWithPriceAndQuantityUpdated = coinsNoDuplicates.map(async (coin) => {
+      const coinPrice = await getCoinPriceNow(coin.id);
+      let quantityCoin = 0;
+
+      purchases.forEach(purchase => {
+        if (purchase.coin.id === coin.id) {
+          quantityCoin += purchase.coin.quantity;
+        }
+      })
+
+      sales.forEach(sale => {
+        if (sale.coin.id === coin.id) {
+          quantityCoin -= sale.coin.quantity;
+        }
+      })
+
+      const data = {
+        ...coin,
+        priceUpdated: coinPrice,
+        quantity: quantityCoin,
+      };
+
+      return data;
+    });
+
+    const coinsWithPriceAndQuantityUpdated = await Promise.all(promisesToPopulateArrayWithCoinsWithPriceAndQuantityUpdated);
+
     const total = purchasesTotal - salesTotal;
+    const totalUpdated = coinsWithPriceAndQuantityUpdated.reduce((acc, coin) => {
+      const amount = coin.priceUpdated * coin.quantity;
+      return acc + amount;
+    }, 0)
 
     const formattedDateLastPurchase = getLastTransactionDate(transactionsParsed, 'positive');
     const formattedDateLastSale = getLastTransactionDate(transactionsParsed, 'negative');
     const totalInterval = `01 à ${formattedDateLastSale || formattedDateLastPurchase}`;
-    
+
+    const percentageCalc = 100 - ((total / totalUpdated) * 100);
+    const percentageText = `${percentageCalc.toFixed(2)}%`;
+    let percentage = '';
+
+    if (percentageCalc >= 0) {
+      percentage = `+ ${percentageText}`;
+    }
+
+    if (percentageCalc < 0) {
+      percentage = `- ${percentageText}`;
+    }
+
+
     setHighlightData({
       purchases: {
         amount: formatToUSD(purchasesTotal),
         dateLastTransaction: formattedDateLastPurchase ?
-        `Última compra dia ${formattedDateLastPurchase}` : 'Não há compras' 
+          `Última compra dia ${formattedDateLastPurchase}` : 'Não há compras'
       },
       sales: {
         amount: formatToUSD(salesTotal),
         dateLastTransaction: formattedDateLastSale ?
-        `Última venda dia ${formattedDateLastSale}` : 'Não há vendas'
+          `Última venda dia ${formattedDateLastSale}` : 'Não há vendas'
       },
       total: {
-        amount: formatToUSD(total),
+        profiting: total <= totalUpdated,
+        percentage,
+        amountFormatted: formatToUSD(total),
+        amountUpdatedFormatted: formatToUSD(totalUpdated),
         dateLastTransaction: formattedDateLastSale || formattedDateLastPurchase ?
-        totalInterval : 'Não há transações'
+          totalInterval : 'Não há transações'
       }
     });
 
@@ -131,7 +199,7 @@ export function Dashboard() {
 
   return (
     <Container>
-      { isLoading ? (
+      {isLoading ? (
         <LoadContainer>
           <ActivityIndicator color={theme.colors.secondary} size="large" />
         </LoadContainer>
@@ -169,10 +237,12 @@ export function Dashboard() {
               lastTransaction={highlightData.sales.dateLastTransaction}
             />
 
-            <HighlightCard
-              type="total"
+            <HighlightCardTotal
               title="Total"
-              amount={highlightData.total.amount}
+              profiting={highlightData.total.profiting}
+              percentage={highlightData.total.percentage}
+              currentAmountFormatted={highlightData.total.amountUpdatedFormatted}
+              investedAmountFormatted={highlightData.total.amountFormatted}
               lastTransaction={highlightData.total.dateLastTransaction}
             />
           </HighlightCards>
@@ -183,7 +253,7 @@ export function Dashboard() {
             <TransactionsList
               data={transactions}
               keyExtractor={item => item.id}
-              renderItem={({ item }) => <TransactionCard data={item} /> }
+              renderItem={({ item }) => <TransactionCard data={item} />}
             />
 
           </Transactions>

@@ -2,21 +2,27 @@ import React from 'react';
 
 import {
   Container,
+  Coin,
   Title,
-  Amount
+  Image,
+  Quantity
 } from './styles';
 
 interface HistoryCardProps {
   title: string;
-  amount: string;
+  quantity: string;
   color: string;
+  image?: string;
 }
 
-export function HistoryCard({ title, amount, color }: HistoryCardProps) {
+export function HistoryCard({ title, quantity, color, image }: HistoryCardProps) {
   return (
     <Container color={color}>
-      <Title>{title}</Title>
-      <Amount>{amount}</Amount>
+      <Coin>
+        {image && <Image source={{ uri: image }} />}
+        <Title>{title}</Title>
+      </Coin>
+      <Quantity>{quantity}</Quantity>
     </Container>
   );
 };
