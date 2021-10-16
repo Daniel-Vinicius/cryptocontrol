@@ -14,6 +14,7 @@ import { useAuth } from '../../hooks/auth';
 
 import { HistoryCard } from '../../components/HistoryCard';
 
+import { Coin } from '../../components/TransactionCard';
 import { DataListProps } from '../Dashboard';
 
 import { formatToUSD } from '../../utils/formatToUSD';
@@ -95,11 +96,22 @@ export function Resume() {
 
     const totalBoughtMinusTotalSold = purchasesTotal - salesTotal;
 
+    const totalByCoins: CoinData[] = [];
     const purchasedCoins = purchases.map(p => p.coin);
 
-    const totalByCoins: CoinData[] = [];
+    let purchasedCoinsWithoutDuplicates: Coin[] = [];
+    let coinsIdWithoutDuplicates: string[] = [];
 
     purchasedCoins.forEach(coin => {
+      if (coinsIdWithoutDuplicates.includes(coin.id)) {
+        return;
+      }
+
+      coinsIdWithoutDuplicates.push(coin.id);
+      purchasedCoinsWithoutDuplicates.push(coin);
+    });
+
+    purchasedCoinsWithoutDuplicates.forEach(coin => {
       let coinSum = 0;
       let coinQuantity = 0;
 
@@ -128,7 +140,7 @@ export function Resume() {
           image: coin.image,
           total: coinSum,
           totalFormatted: formatToUSD(coinSum),
-          quantity: String(coinQuantity),
+          quantity: String(coinQuantity.toFixed(8)),
           percent,
           color: getRandomColor()
         });

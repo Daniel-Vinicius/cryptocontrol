@@ -163,7 +163,7 @@ export function Dashboard() {
     }
 
     if (percentageCalc < 0) {
-      percentage = `- ${percentageText}`;
+      percentage = ` ${percentageText}`;
     }
 
 
