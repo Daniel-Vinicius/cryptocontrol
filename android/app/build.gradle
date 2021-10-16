@@ -132,7 +132,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.gofinances"
+        applicationId "com.danielvinicius.cryptocontrol"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

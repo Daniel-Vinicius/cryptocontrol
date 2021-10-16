@@ -1,4 +1,4 @@
-package com.gofinances;
+package com.danielvinicius.cryptocontrol;
 
 import android.os.Bundle;
 

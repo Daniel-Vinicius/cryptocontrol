@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "gofinances.app"
-               BlueprintName = "gofinances"
-               ReferencedContainer = "container:gofinances.xcodeproj">
+               BuildableName = "cryptocontrol.app"
+               BlueprintName = "cryptocontrol"
+               ReferencedContainer = "container:cryptocontrol.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "gofinancesTests.xctest"
-               BlueprintName = "gofinancesTests"
-               ReferencedContainer = "container:gofinances.xcodeproj">
+               BuildableName = "cryptocontrolTests.xctest"
+               BlueprintName = "cryptocontrolTests"
+               ReferencedContainer = "container:cryptocontrol.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "gofinances.app"
-            BlueprintName = "gofinances"
-            ReferencedContainer = "container:gofinances.xcodeproj">
+            BuildableName = "cryptocontrol.app"
+            BlueprintName = "cryptocontrol"
+            ReferencedContainer = "container:cryptocontrol.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "gofinances.app"
-            BlueprintName = "gofinances"
-            ReferencedContainer = "container:gofinances.xcodeproj">
+            BuildableName = "cryptocontrol.app"
+            BlueprintName = "cryptocontrol"
+            ReferencedContainer = "container:cryptocontrol.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
