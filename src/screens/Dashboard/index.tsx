@@ -248,7 +248,7 @@ export function Dashboard() {
           </HighlightCards>
 
           <Transactions>
-            <Title>Listagem</Title>
+            <Title>Transações</Title>
 
             <TransactionsList
               data={transactions}

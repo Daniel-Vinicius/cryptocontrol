@@ -5,6 +5,8 @@
 
 * **Melhorar qualidade do código com mais abstração**
 
+* **Add Prettier e ESLint**
+
 * **Testes automatizados**
 
 * **CI/CD**

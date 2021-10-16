@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ThemeProvider } from 'styled-components';
+
+import * as Updates from "expo-updates";
 
 import AppLoading from 'expo-app-loading';
 import { StatusBar } from 'expo-status-bar';
@@ -18,11 +20,23 @@ export default function App() {
     return <AppLoading />
   }
 
+  useEffect(() => {
+    async function updateApp() {
+      const { isAvailable } = await Updates.checkForUpdateAsync();
+
+      if (isAvailable) {
+        await Updates.fetchUpdateAsync();
+      }
+    }
+
+    updateApp();
+  }, []);
+
   return (
     <ThemeProvider theme={theme}>
-        <AuthProvider>
-          <Routes />
-        </AuthProvider>
+      <AuthProvider>
+        <Routes />
+      </AuthProvider>
       <StatusBar style="light" translucent />
     </ThemeProvider>
   );
