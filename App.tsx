@@ -12,14 +12,6 @@ import { Routes } from './src/routes';
 import { AuthProvider, useAuth } from './src/hooks/auth';
 
 export default function App() {
-  const [fontsLoaded] = useFonts({ Poppins_400Regular, Poppins_500Medium, Poppins_700Bold });
-
-  const { userStorageLoading } = useAuth();
-
-  if (!fontsLoaded || userStorageLoading) {
-    return <AppLoading />
-  }
-
   useEffect(() => {
     async function updateApp() {
       const { isAvailable } = await Updates.checkForUpdateAsync();
@@ -31,6 +23,13 @@ export default function App() {
 
     updateApp();
   }, []);
+
+  const [fontsLoaded] = useFonts({ Poppins_400Regular, Poppins_500Medium, Poppins_700Bold });
+  const { userStorageLoading } = useAuth();
+
+  if (!fontsLoaded || userStorageLoading) {
+    return <AppLoading />
+  }
 
   return (
     <ThemeProvider theme={theme}>
