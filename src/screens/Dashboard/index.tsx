@@ -76,12 +76,12 @@ export function Dashboard() {
       if (transaction.type === 'positive') {
         purchasesTotal += Number(transaction.amount);
       }
-      
+
       if (transaction.type === 'negative') {
         salesTotal += Number(transaction.amount);
       }
     });
-    
+
     const total = purchasesTotal - salesTotal;
     const totalUpdated = await getTotalUpdated({ purchases, sales, coinsWithoutDuplicates });
     const percentage = getPercentage(total, totalUpdated);
