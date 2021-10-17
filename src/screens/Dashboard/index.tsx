@@ -1,18 +1,21 @@
 import React, { useState, useCallback } from 'react';
 import { ActivityIndicator } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { useTheme } from 'styled-components';
 import { useFocusEffect } from '@react-navigation/core';
+
 import { useAuth } from '../../hooks/auth';
+import { useTransaction } from '../../hooks/transaction';
 
 import { formatToUSD } from '../../utils/formatToUSD';
-import { getCoinPriceNow } from '../../utils/getCoinDataNow';
 import { getLastTransactionDate } from '../../utils/getLastTransactionDate';
+import { getPercentage } from '../../utils/getPercentage';
+import { getTotalUpdated } from '../../utils/getTotalUpdated';
+import { getCoinsWithoutDuplicates } from '../../utils/getCoinsWithoutDuplicates';
 
 import { HighlightCard } from '../../components/HighlightCard';
 import { HighlightCardTotal } from '../../components/HighlightCardTotal';
-import { TransactionCard, ITransactionCard } from '../../components/TransactionCard';
+import { TransactionCard } from '../../components/TransactionCard';
 
 import {
   Container,
@@ -31,12 +34,6 @@ import {
   LogoutButton,
   LoadContainer,
 } from './styles';
-
-export interface DataListProps extends ITransactionCard {
-  id: string;
-  amount: number;
-  amountFormatted: string;
-}
 
 interface HighlightProps {
   amount: string;
@@ -58,114 +55,36 @@ interface HighlightData {
 export function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [highlightData, setHighlightData] = useState<HighlightData>({} as HighlightData);
-  const [transactions, setTransactions] = useState<DataListProps[]>([]);
 
   const theme = useTheme();
   const { signOut, user } = useAuth();
+  const { transactions } = useTransaction();
 
-  async function loadTransactions() {
-    const collectionKeyTransactions = `@cryptocontrol:transactions_user:${user.id}`;
+  async function loadData() {
+    const purchases = transactions.filter(transaction => transaction.type === 'positive');
+    const sales = transactions.filter(transaction => transaction.type === 'negative');
+    const coinsWithoutDuplicates = getCoinsWithoutDuplicates(transactions);
 
-    const transactionsStringified = await AsyncStorage.getItem(collectionKeyTransactions);
-    const transactionsParsed = transactionsStringified ? JSON.parse(transactionsStringified) : [];
+    const formattedDateLastPurchase = getLastTransactionDate(transactions, 'positive');
+    const formattedDateLastSale = getLastTransactionDate(transactions, 'negative');
+    const totalInterval = `01 à ${formattedDateLastSale || formattedDateLastPurchase}`;
 
     let purchasesTotal = 0;
     let salesTotal = 0;
 
-    const transactionsFormatted: DataListProps[] = transactionsParsed.map((transaction: Omit<DataListProps, "amountFormatted" | "amount">) => {
-      const amount = transaction.coin.quantity * transaction.coin.price;
-
+    transactions.forEach((transaction) => {
       if (transaction.type === 'positive') {
-        purchasesTotal += Number(amount);
+        purchasesTotal += Number(transaction.amount);
       }
-
+      
       if (transaction.type === 'negative') {
-        salesTotal += Number(amount);
-      }
-
-      const amountFormatted = formatToUSD(Number(amount));
-
-      const date = Intl.DateTimeFormat('pt-BR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-      }).format(new Date(transaction.date));
-
-      return {
-        id: transaction.id,
-        name: transaction.name,
-        type: transaction.type,
-        amount,
-        amountFormatted,
-        date,
-        coin: transaction.coin,
-      };
-    });
-
-    setTransactions(transactionsFormatted);
-
-    const transactionsCoins = transactionsFormatted.map(coin => coin.coin);
-    const coinsNoDuplicates: typeof transactionsCoins = [];
-
-    transactionsCoins.forEach(coin => {
-      if (!coinsNoDuplicates.find(coinNoDuplicated => coinNoDuplicated.id === coin.id)) {
-        coinsNoDuplicates.push(coin);
+        salesTotal += Number(transaction.amount);
       }
     });
-
-
-    const purchases = transactionsFormatted.filter(transaction => transaction.type === 'positive');
-    const sales = transactionsFormatted.filter(transaction => transaction.type === 'negative');
-
-    const promisesToPopulateArrayWithCoinsWithPriceAndQuantityUpdated = coinsNoDuplicates.map(async (coin) => {
-      const coinPrice = await getCoinPriceNow(coin.id);
-      let quantityCoin = 0;
-
-      purchases.forEach(purchase => {
-        if (purchase.coin.id === coin.id) {
-          quantityCoin += purchase.coin.quantity;
-        }
-      })
-
-      sales.forEach(sale => {
-        if (sale.coin.id === coin.id) {
-          quantityCoin -= sale.coin.quantity;
-        }
-      })
-
-      const data = {
-        ...coin,
-        priceUpdated: coinPrice,
-        quantity: quantityCoin,
-      };
-
-      return data;
-    });
-
-    const coinsWithPriceAndQuantityUpdated = await Promise.all(promisesToPopulateArrayWithCoinsWithPriceAndQuantityUpdated);
-
+    
     const total = purchasesTotal - salesTotal;
-    const totalUpdated = coinsWithPriceAndQuantityUpdated.reduce((acc, coin) => {
-      const amount = coin.priceUpdated * coin.quantity;
-      return acc + amount;
-    }, 0)
-
-    const formattedDateLastPurchase = getLastTransactionDate(transactionsParsed, 'positive');
-    const formattedDateLastSale = getLastTransactionDate(transactionsParsed, 'negative');
-    const totalInterval = `01 à ${formattedDateLastSale || formattedDateLastPurchase}`;
-
-    const percentageCalc = 100 - ((total / totalUpdated) * 100);
-    const percentageText = `${percentageCalc.toFixed(2)}%`;
-    let percentage = '';
-
-    if (percentageCalc >= 0) {
-      percentage = `+ ${percentageText}`;
-    }
-
-    if (percentageCalc < 0) {
-      percentage = ` ${percentageText}`;
-    }
-
+    const totalUpdated = await getTotalUpdated({ purchases, sales, coinsWithoutDuplicates });
+    const percentage = getPercentage(total, totalUpdated);
 
     setHighlightData({
       purchases: {
@@ -193,9 +112,8 @@ export function Dashboard() {
 
   useFocusEffect(
     useCallback(() => {
-      loadTransactions()
-    }, [])
-  )
+      loadData()
+    }, [transactions.length]));
 
   return (
     <Container>
@@ -248,7 +166,7 @@ export function Dashboard() {
           </HighlightCards>
 
           <Transactions>
-            <Title>Transações</Title>
+            <Title>Últimas Transações</Title>
 
             <TransactionsList
               data={transactions}

@@ -9,13 +9,12 @@ import {
 interface CoinSelectButtonProps {
   title: string;
   onPress: () => void;
-  onLongPress?: () => void;
 }
 
-export function CoinSelectButton({ title, onPress, onLongPress }: CoinSelectButtonProps) {
+export function CoinSelectButton({ title, onPress }: CoinSelectButtonProps) {
 
   return (
-    <Container onPress={onPress} onLongPress={onLongPress}>
+    <Container onPress={onPress}>
       <Coin>{title}</Coin>
       <Icon name="chevron-down" />
     </Container>

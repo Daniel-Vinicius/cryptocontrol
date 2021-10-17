@@ -1,6 +1,5 @@
 import React, { useState, useCallback } from 'react';
 import { ActivityIndicator } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { VictoryPie } from 'victory-native';
 import { RFValue } from 'react-native-responsive-fontsize';
@@ -10,15 +9,13 @@ import { ptBR } from 'date-fns/locale';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { useFocusEffect } from '@react-navigation/core';
 import { useTheme } from 'styled-components';
-import { useAuth } from '../../hooks/auth';
+import { useTransaction } from '../../hooks/transaction';
 
 import { HistoryCard } from '../../components/HistoryCard';
 
-import { Coin } from '../../components/TransactionCard';
-import { DataListProps } from '../Dashboard';
-
 import { formatToUSD } from '../../utils/formatToUSD';
 import { getRandomColor } from '../../utils/getRandomColor';
+import { getCoinsWithoutDuplicates } from '../../utils/getCoinsWithoutDuplicates';
 
 import {
   Container,
@@ -50,7 +47,7 @@ export function Resume() {
   const [totalByCoin, setTotalByCoin] = useState<CoinData[]>([]);
 
   const theme = useTheme();
-  const { user } = useAuth();
+  const { transactions } = useTransaction();
 
   function handleDateChange(action: 'next' | 'prev') {
     if (action === 'next') {
@@ -66,18 +63,14 @@ export function Resume() {
 
   async function loadData() {
     setIsLoading(true);
-    const collectionKeyTransactions = `@cryptocontrol:transactions_user:${user.id}`;
 
-    const response = await AsyncStorage.getItem(collectionKeyTransactions);
-    const transactionsParsed = response ? JSON.parse(response) as Omit<DataListProps, "amountFormatted" | "amount">[] : [];
-
-    const purchases = transactionsParsed.filter(transaction =>
+    const purchases = transactions.filter(transaction =>
       transaction.type === 'positive' &&
       new Date(transaction.date).getMonth() <= selectedDate.getMonth() &&
       new Date(transaction.date).getFullYear() <= selectedDate.getFullYear()
     );
 
-    const sales = transactionsParsed.filter(transaction =>
+    const sales = transactions.filter(transaction =>
       transaction.type === 'negative' &&
       new Date(transaction.date).getMonth() <= selectedDate.getMonth() &&
       new Date(transaction.date).getFullYear() <= selectedDate.getFullYear()
@@ -94,22 +87,10 @@ export function Resume() {
     }, 0);
 
 
-    const totalBoughtMinusTotalSold = purchasesTotal - salesTotal;
+    const total = purchasesTotal - salesTotal;
 
     const totalByCoins: CoinData[] = [];
-    const purchasedCoins = purchases.map(p => p.coin);
-
-    let purchasedCoinsWithoutDuplicates: Coin[] = [];
-    let coinsIdWithoutDuplicates: string[] = [];
-
-    purchasedCoins.forEach(coin => {
-      if (coinsIdWithoutDuplicates.includes(coin.id)) {
-        return;
-      }
-
-      coinsIdWithoutDuplicates.push(coin.id);
-      purchasedCoinsWithoutDuplicates.push(coin);
-    });
+    const purchasedCoinsWithoutDuplicates = getCoinsWithoutDuplicates(purchases);
 
     purchasedCoinsWithoutDuplicates.forEach(coin => {
       let coinSum = 0;
@@ -132,7 +113,7 @@ export function Resume() {
       })
 
       if (coinSum > 0) {
-        const percent = `${(coinSum / totalBoughtMinusTotalSold * 100).toFixed(1)}%`;
+        const percent = `${(coinSum / total * 100).toFixed(1)}%`;
 
         totalByCoins.push({
           name: coin.name,
@@ -154,7 +135,7 @@ export function Resume() {
   useFocusEffect(
     useCallback(() => {
       loadData()
-    }, [selectedDate])
+    }, [selectedDate, transactions.length])
   )
 
   return (

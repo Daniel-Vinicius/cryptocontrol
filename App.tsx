@@ -1,15 +1,13 @@
 import React, { useEffect } from 'react';
-import { ThemeProvider } from 'styled-components';
 
 import * as Updates from "expo-updates";
-
 import AppLoading from 'expo-app-loading';
 import { StatusBar } from 'expo-status-bar';
 import { useFonts, Poppins_400Regular, Poppins_500Medium, Poppins_700Bold } from '@expo-google-fonts/poppins';
 
-import theme from './src/global/styles/theme';
+import { AppProvider } from './src/hooks';
 import { Routes } from './src/routes';
-import { AuthProvider, useAuth } from './src/hooks/auth';
+import { useAuth } from './src/hooks/auth';
 
 export default function App() {
   useEffect(() => {
@@ -21,7 +19,9 @@ export default function App() {
       }
     }
 
-    updateApp();
+    if (process.env.NODE_ENV !== 'development') {
+      updateApp();
+    }
   }, []);
 
   const [fontsLoaded] = useFonts({ Poppins_400Regular, Poppins_500Medium, Poppins_700Bold });
@@ -32,11 +32,9 @@ export default function App() {
   }
 
   return (
-    <ThemeProvider theme={theme}>
-      <AuthProvider>
-        <Routes />
-      </AuthProvider>
+    <AppProvider>
       <StatusBar style="light" translucent />
-    </ThemeProvider>
+      <Routes />
+    </AppProvider>
   );
 }

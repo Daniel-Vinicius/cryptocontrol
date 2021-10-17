@@ -41,8 +41,9 @@ export const Coin = styled.TouchableOpacity<CoinProps>`
   border: ${({ theme, isActive }) => isActive ? `${1.5}px solid ${theme.colors.primary}` : 0};
 `;
 
-export const Icon = styled(Feather)`
-  font-size: ${RFValue(20)}px;
+export const CoinIcon = styled.Image`
+  width: 24px;
+  height: 24px;
   margin-right: 16px;
 `;
 

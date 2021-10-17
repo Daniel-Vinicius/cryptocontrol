@@ -1,18 +1,12 @@
-interface Coin {
-  id: string;
-  symbol: string;
-  name: string;
-  image?: string;
-  current_price: number;
-}
+import { Coin } from '../services/types';
 
-export async function getCoinDataNow(coinId: string): Promise<Coin | false> {
+export async function getCoinDataNow(coinId: string): Promise<Coin | null> {
   const apiCoingeckoCoinURL = `https://api.coingecko.com/api/v3/coins/${coinId}?localization=false&tickers=false`;
   const response = await fetch(apiCoingeckoCoinURL);
   const responseJSON = await response.json();
 
   if (responseJSON.error) {
-    return false;
+    return null;
   }
 
   const priceCoinNowInDollar = responseJSON.market_data.current_price.usd as number;
@@ -26,13 +20,4 @@ export async function getCoinDataNow(coinId: string): Promise<Coin | false> {
   };
 
   return coin;
-}
-
-export async function getCoinPriceNow(coinId: string) {
-  const apiCoingeckoCoinURL = `https://api.coingecko.com/api/v3/coins/${coinId}?localization=false&tickers=false`;
-  const response = await fetch(apiCoingeckoCoinURL);
-  const coin = await response.json();
-  const priceCoinNowInDollar = coin.market_data.current_price.usd as number;
-
-  return priceCoinNowInDollar;
 }

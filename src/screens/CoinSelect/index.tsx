@@ -5,6 +5,7 @@ import { useTheme } from 'styled-components';
 import { Button } from '../../components/Form/Button';
 import { Input } from '../../components/Form/Input';
 import { getCoinDataNow } from '../../utils/getCoinDataNow';
+import { Coin as ICoin } from '../../services/types';
 
 import {
   Container,
@@ -15,31 +16,24 @@ import {
   Separator,
   Footer,
   LoadContainer,
+  CoinIcon
 } from './styles';
 
-interface Coin {
-  id: string;
-  symbol: string;
-  name: string;
-  image?: string;
-  current_price: number;
-}
-
 interface Props {
-  coin: Coin;
-  setCoin: (coin: Coin) => void;
+  coin: ICoin;
+  setCoin: (coin: ICoin) => void;
   closeSelectCoin: () => void;
 }
 
 export function CoinSelect({ coin, setCoin, closeSelectCoin }: Props) {
   const [isLoading, setIsLoading] = useState(true);
   const [coinSearch, setCoinSearch] = useState('');
-  const [coinsBackup, setCoinsBackup] = useState<Coin[]>([]);
-  const [coins, setCoins] = useState<Coin[]>([]);
+  const [coinsBackup, setCoinsBackup] = useState<ICoin[]>([]);
+  const [coins, setCoins] = useState<ICoin[]>([]);
 
   const theme = useTheme();
 
-  function handleCoinSelect(item: Coin) {
+  function handleCoinSelect(item: ICoin) {
     setCoin(item);
   }
 
@@ -78,7 +72,7 @@ export function CoinSelect({ coin, setCoin, closeSelectCoin }: Props) {
     const response = await fetch(apiCoingeckoCoinsURL);
     const coinsInfo = await response.json();
 
-    const coinsFormatted: Coin[] = coinsInfo.map((item: any) => {
+    const coinsFormatted: ICoin[] = coinsInfo.map((item: any) => {
       return {
         id: item.id,
         symbol: item.symbol,
@@ -124,6 +118,7 @@ export function CoinSelect({ coin, setCoin, closeSelectCoin }: Props) {
                 onPress={() => handleCoinSelect(item)}
                 isActive={coin.id === item.id}
               >
+                <CoinIcon source={{ uri: item.image }} />
                 <Name>{item.name}</Name>
               </Coin>
             )}

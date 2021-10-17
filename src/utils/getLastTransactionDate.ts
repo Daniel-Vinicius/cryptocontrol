@@ -1,6 +1,6 @@
-import { DataListProps } from "../screens/Dashboard";
+import { Transaction } from "../services/types";
 
-export function getLastTransactionDate(transactions: DataListProps[], type: 'positive' | 'negative'): string {
+export function getLastTransactionDate(transactions: Transaction[], type: 'positive' | 'negative'): string {
   const transactionsFiltered = transactions.filter(transaction => transaction.type === type);
 
   const timestampsArrayTransactions = transactionsFiltered.map(transaction => {

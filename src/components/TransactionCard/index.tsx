@@ -11,29 +11,14 @@ import {
   Date,
 } from './styles';
 
-export interface Coin {
-  quantity: number;
-  price: number;
-  id: string;
-  name: string;
-  symbol: string;
-  image?: string;
-}
-
-export interface ITransactionCard {
-  name: string;
-  type: 'positive' | 'negative';
-  date: string;
-  amountFormatted: string;
-  coin: Coin;
-}
+import { CoinInTransaction, Transaction } from '../../services/types';
 
 interface TransactionCardProps {
-  data: ITransactionCard;
+  data: Transaction;
 }
 
 export function TransactionCard({ data }: TransactionCardProps) {
-  const { type, name, coin, date, amountFormatted } = data;
+  const { type, name, coin, dateFormatted, amountFormatted } = data;
 
   return (
     <Container>
@@ -45,7 +30,7 @@ export function TransactionCard({ data }: TransactionCardProps) {
           {coin.image && <CoinImage source={{ uri: coin.image }} />}
           <CoinName>{coin.name}</CoinName>
         </Coin>
-        <Date>{date}</Date>
+        <Date>{dateFormatted}</Date>
       </Footer>
     </Container>
   );

@@ -10,12 +10,16 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useForm } from 'react-hook-form';
 import { useNavigation } from '@react-navigation/native';
+
 import { useAuth } from '../../hooks/auth';
+import { useTransaction } from '../../hooks/transaction';
 
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import uuid from 'react-native-uuid';
+
 import { formatToUSD } from '../../utils/formatToUSD';
+import { Coin, Transaction } from '../../services/types';
 
 import { InputForm } from '../../components/Form/InputForm';
 import { Button } from '../../components/Form/Button';
@@ -40,14 +44,6 @@ interface FormData {
   quantity: string;
 }
 
-interface Coin {
-  id: string;
-  symbol: string;
-  name: string;
-  image?: string;
-  current_price: number;
-}
-
 type NavigationProps = {
   navigate: (screen: string) => void;
 }
@@ -61,7 +57,7 @@ const schema = Yup.object().shape({
 });
 
 export function Register() {
-  const [transactionType, setTransactionType] = useState('');
+  const [transactionType, setTransactionType] = useState<'positive' | 'negative' | ''>('');
   const [coinModalOpen, setCoinModalOpen] = useState(false);
   const [totalValue, setTotalValue] = useState(0);
 
@@ -75,6 +71,7 @@ export function Register() {
 
   const navigation = useNavigation<NavigationProps>();
   const { user } = useAuth();
+  const { transactions, setTransactions } = useTransaction();
 
   const { control, handleSubmit, reset, watch, formState: { errors } } = useForm({
     resolver: yupResolver(schema)
@@ -86,10 +83,6 @@ export function Register() {
 
   function handleOpenSelectCoinModal() {
     setCoinModalOpen(true);
-  }
-
-  function handleOpenPrompt() {
-    Alert.alert('Não encontrou a moeda que queria?', 'Não tem problema, é só inserir uma # mais o API id da moeda no coingecko na barra de pesquisa por moedas. \n \n Por exemplo "#chia". \n \n https://www.coingecko.com/en/coins/chia')
   }
 
   function handleCloseSelectCoinModal() {
@@ -107,13 +100,27 @@ export function Register() {
 
     const collectionKeyTransactions = `@cryptocontrol:transactions_user:${user.id}`;
 
-    const newTransaction = {
+    const amountFormatted = formatToUSD(totalValue);
+
+    const date = new Date();
+    const dateFormatted = Intl.DateTimeFormat('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    }).format(date);
+
+    const newTransaction: Transaction = {
       id: String(uuid.v4()),
       name: form.name,
       type: transactionType,
-      date: new Date(),
+      date,
+      amount: totalValue,
+      amountFormatted,
+      dateFormatted,
       coin: {
-        quantity: form.quantity,
+        quantity: Number(form.quantity),
         price: coin.current_price,
         id: coin.id,
         name: coin.name,
@@ -123,16 +130,13 @@ export function Register() {
     };
 
     try {
-      const allOldTransactionsStringified = await AsyncStorage.getItem(collectionKeyTransactions);
-      const allOldTransactions = allOldTransactionsStringified ? JSON.parse(allOldTransactionsStringified) : [];
-
-      const allTransactions = [...allOldTransactions, newTransaction];
-
+      const allTransactions = [...transactions, newTransaction];
       await AsyncStorage.setItem(collectionKeyTransactions, JSON.stringify(allTransactions));
 
       reset();
       setTransactionType('');
       setCoin({ id: 'coin', symbol: 'coin', name: 'Moeda', image: '', current_price: 0 });
+      setTransactions(allTransactions);
 
       navigation.navigate('Listagem');
     } catch (error) {
@@ -140,7 +144,6 @@ export function Register() {
       Alert.alert("Não foi possível salvar");
     }
   }
-
 
   const quantityWatch = watch("quantity");
 
@@ -192,7 +195,7 @@ export function Register() {
               />
             </TransactionTypes>
 
-            <CoinSelectButton title={coin.name} onPress={handleOpenSelectCoinModal} onLongPress={handleOpenPrompt} />
+            <CoinSelectButton title={coin.name} onPress={handleOpenSelectCoinModal} />
             {coin.current_price !== 0 && (
               <TotalValueContainer>
                 Valor total de{' '}

@@ -65,7 +65,7 @@ function AuthProvider({ children }: AuthProviderProps) {
         await AsyncStorage.setItem(collectionKeyUser, JSON.stringify(userLogged));
       }
     } catch (error) {
-      throw new Error(error);      
+      throw new Error(String(error));      
     }
   }
 
@@ -92,7 +92,7 @@ function AuthProvider({ children }: AuthProviderProps) {
       }
 
     } catch (error) {
-      throw new Error(error);      
+      throw new Error(String(error));      
     }
   }
 
