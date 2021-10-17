@@ -196,7 +196,7 @@ export function Register() {
             </TransactionTypes>
 
             <CoinSelectButton title={coin.name} onPress={handleOpenSelectCoinModal} />
-            {coin.current_price !== 0 && (
+            {!isNaN(totalValue) && (
               <TotalValueContainer>
                 Valor total de{' '}
                 <TotalValue>

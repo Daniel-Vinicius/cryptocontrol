@@ -4,6 +4,8 @@ import { useTheme } from 'styled-components';
 
 import { Button } from '../../components/Form/Button';
 import { Input } from '../../components/Form/Input';
+import { BackButton } from '../../components/BackButton';
+
 import { getCoinDataNow } from '../../utils/getCoinDataNow';
 import { Coin as ICoin } from '../../services/types';
 
@@ -97,9 +99,8 @@ export function CoinSelect({ coin, setCoin, closeSelectCoin }: Props) {
   return (
     <Container>
       <Header>
-        <Title>
-          Categoria
-        </Title>
+        <BackButton onPress={closeSelectCoin} />
+        <Title>Categoria</Title>
       </Header>
       {isLoading ? (
         <LoadContainer>
@@ -125,7 +126,9 @@ export function CoinSelect({ coin, setCoin, closeSelectCoin }: Props) {
           />
 
           <Footer>
-            <Button title={isSearchingNotListedCoin ? "Buscar moeda" : "Selecionar"} onPress={isSearchingNotListedCoin ? handleSearchCoinInAPI : closeSelectCoin} />
+            <Button
+              title={isSearchingNotListedCoin ? "Buscar moeda" : "Selecionar"}
+              onPress={isSearchingNotListedCoin ? handleSearchCoinInAPI : closeSelectCoin} />
           </Footer>
         </>
       }

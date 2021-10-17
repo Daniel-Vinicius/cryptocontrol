@@ -17,11 +17,12 @@ export const Header = styled.View`
   background-color: ${({ theme }) => theme.colors.primary};
 
   width: 100%;
-  height: ${RFValue(90)}px;
+  height: ${RFValue(80)}px;
 
   align-items: center;
-  justify-content: flex-end;
-  padding-bottom: 18px;
+  justify-content: center;
+  flex-direction: row;
+  padding-top: 10px;
 `;
 
 export const Title = styled.Text`
