@@ -33,6 +33,7 @@ export function SignIn() {
       setIsLoading(false);
     } catch (error) {
       Alert.alert('Não foi possível conectar a conta Google');
+      setIsLoading(false);
     }
   }
 

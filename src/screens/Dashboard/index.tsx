@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { ActivityIndicator } from 'react-native';
+import { ActivityIndicator, Alert } from 'react-native';
 
 import { useTheme } from 'styled-components';
 import { useFocusEffect } from '@react-navigation/core';
@@ -16,6 +16,7 @@ import { getCoinsWithoutDuplicates } from '../../utils/getCoinsWithoutDuplicates
 import { HighlightCard } from '../../components/HighlightCard';
 import { HighlightCardTotal } from '../../components/HighlightCardTotal';
 import { TransactionCard } from '../../components/TransactionCard';
+import { Button } from '../../components/Form/Button';
 
 import {
   Container,
@@ -29,7 +30,6 @@ import {
   Icon,
   HighlightCards,
   Transactions,
-  Title,
   TransactionsList,
   LogoutButton,
   LoadContainer,
@@ -60,7 +60,7 @@ export function Dashboard() {
 
   const theme = useTheme();
   const { signOut, user } = useAuth();
-  const { transactions } = useTransaction();
+  const { transactions, removeAllTransactions } = useTransaction();
 
   async function loadData() {
     const purchases = transactions.filter(
@@ -132,6 +132,29 @@ export function Dashboard() {
     setIsLoading(false);
   }
 
+  async function excludeAllData() {
+    Alert.alert(
+      'Excluir todos os dados',
+      `Você deseja remover todos os dados de transações?`,
+      [
+        {
+          text: 'Sim quero remover',
+          onPress: async () => {
+            try {
+              await removeAllTransactions();
+            } catch (error) {
+              Alert.alert('Não foi possível remover! 😥');
+            }
+          },
+        },
+        {
+          text: 'Não foi engano',
+          style: 'cancel',
+        },
+      ],
+    );
+  }
+
   useFocusEffect(
     useCallback(() => {
       loadData();
@@ -190,7 +213,13 @@ export function Dashboard() {
           </HighlightCards>
 
           <Transactions>
-            <Title>Últimas Transações</Title>
+            {transactions.length > 0 && (
+              <Button
+                title="Excluir todos os dados"
+                style={{ height: 50, marginTop: -10, marginBottom: 16 }}
+                onPress={excludeAllData}
+              />
+            )}
 
             <TransactionsList
               data={transactions}

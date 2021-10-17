@@ -13,7 +13,7 @@ export function getPercentage(firstValue: number, secondValue: number) {
   }
 
   if (percentageCalc < 0) {
-    percentage = `- ${percentageText}`;
+    percentage = percentageText;
   }
 
   return percentage;

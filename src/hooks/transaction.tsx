@@ -18,6 +18,7 @@ interface TransactionProviderProps {
 interface IAuthContextData {
   transactions: Transaction[];
   setTransactions: (transactions: Transaction[]) => void;
+  removeAllTransactions: () => Promise<void>;
 }
 
 const AuthContext = createContext({} as IAuthContextData);
@@ -25,6 +26,16 @@ const AuthContext = createContext({} as IAuthContextData);
 function TransactionProvider({ children }: TransactionProviderProps) {
   const { user, userStorageLoading } = useAuth();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+
+  async function removeAllTransactions() {
+    try {
+      const collectionKeyTransactions = `@cryptocontrol:transactions_user:${user.id}`;
+      await AsyncStorage.removeItem(collectionKeyTransactions);
+      setTransactions([]);
+    } catch (error) {
+      throw new Error(String(error));
+    }
+  }
 
   useEffect(() => {
     async function loadTransaction() {
@@ -44,6 +55,7 @@ function TransactionProvider({ children }: TransactionProviderProps) {
       value={{
         transactions,
         setTransactions,
+        removeAllTransactions
       }}
     >
       {children}

@@ -1,9 +1,11 @@
+/* eslint-disable import/no-duplicates */
 import React, { useState, useCallback } from 'react';
 import { ActivityIndicator } from 'react-native';
 
 import { VictoryPie } from 'victory-native';
 import { RFValue } from 'react-native-responsive-fontsize';
-import { addMonths, subMonths, format, ptBR } from 'date-fns';
+import { addMonths, subMonths, format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { useFocusEffect } from '@react-navigation/core';
