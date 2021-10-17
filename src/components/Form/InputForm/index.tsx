@@ -17,11 +17,11 @@ export function InputForm({ control, name, error, ...rest }: InputFormProps) {
       <Controller
         control={control}
         name={name}
-        render={({ field: { onChange, value }}) => (
+        render={({ field: { onChange, value } }) => (
           <Input onChangeText={onChange} value={value} {...rest} />
         )}
       />
       {error && <Error>{error}</Error>}
     </Container>
   );
-};
+}

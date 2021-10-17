@@ -12,11 +12,11 @@ export const Container = styled.View<ContainerProps>`
 
   flex-direction: row;
   justify-content: space-between;
-  
+
   border-radius: 5px;
   border-left-width: 5px;
   border-left-color: ${({ color }) => color};
-  
+
   padding: 12px 24px;
   margin-bottom: 8px;
 `;

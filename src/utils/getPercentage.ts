@@ -5,7 +5,7 @@ export function getPercentage(firstValue: number, secondValue: number) {
 
   let percentage = '';
 
-  const percentageCalc = 100 - ((firstValue / secondValue) * 100);
+  const percentageCalc = 100 - (firstValue / secondValue) * 100;
   const percentageText = `${percentageCalc.toFixed(2)}%`;
 
   if (percentageCalc >= 0) {
@@ -16,5 +16,5 @@ export function getPercentage(firstValue: number, secondValue: number) {
     percentage = `- ${percentageText}`;
   }
 
-  return percentageText;
+  return percentage;
 }

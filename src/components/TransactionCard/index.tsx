@@ -11,7 +11,7 @@ import {
   Date,
 } from './styles';
 
-import { CoinInTransaction, Transaction } from '../../services/types';
+import { Transaction } from '../../services/types';
 
 interface TransactionCardProps {
   data: Transaction;
@@ -23,7 +23,9 @@ export function TransactionCard({ data }: TransactionCardProps) {
   return (
     <Container>
       <Title>{name}</Title>
-      <Amount type={type}>{type === 'negative' ? '- ' + amountFormatted : amountFormatted}</Amount>
+      <Amount type={type}>
+        {type === 'negative' ? `- ${amountFormatted}` : amountFormatted}
+      </Amount>
 
       <Footer>
         <Coin>
@@ -34,4 +36,4 @@ export function TransactionCard({ data }: TransactionCardProps) {
       </Footer>
     </Container>
   );
-};
+}

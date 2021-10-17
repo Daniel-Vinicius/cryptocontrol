@@ -1,0 +1,14 @@
+/*.js
+node_modules
+dist
+package.json
+yarn.lock
+package-lock.json
+tsconfig.json
+.expo
+.expo-shared
+metro.config.js
+babel.config.js
+ios
+android
+/*.d.ts

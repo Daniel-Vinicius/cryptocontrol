@@ -1,5 +1,4 @@
 import styled from 'styled-components/native';
-import { Feather } from '@expo/vector-icons';
 
 import { RFValue } from 'react-native-responsive-fontsize';
 
@@ -24,7 +23,8 @@ export const Amount = styled.Text<TransactionProps>`
   font-family: ${({ theme }) => theme.fonts.regular};
   font-size: ${RFValue(20)}px;
 
-  color: ${({ theme, type }) => type === 'negative' ? theme.colors.attention : theme.colors.success };
+  color: ${({ theme, type }) =>
+    type === 'negative' ? theme.colors.attention : theme.colors.success};
 
   margin-top: 2px;
 `;
@@ -33,7 +33,7 @@ export const Footer = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  
+
   margin-top: 18px;
 `;
 
@@ -59,4 +59,3 @@ export const Date = styled.Text`
   font-size: ${RFValue(14)}px;
   color: ${({ theme }) => theme.colors.text};
 `;
-

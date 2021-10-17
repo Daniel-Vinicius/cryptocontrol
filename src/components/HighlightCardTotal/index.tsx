@@ -15,7 +15,6 @@ import {
   Percent,
 } from './styles';
 
-
 interface HighlightCardTotalProps {
   title: string;
   lastTransaction: string;
@@ -33,12 +32,11 @@ export function HighlightCardTotal({
   investedAmountFormatted,
   currentAmountFormatted,
 }: HighlightCardTotalProps) {
-
   return (
     <Container>
       <Header>
         <Title>{title}</Title>
-        <Icon name='dollar-sign' profiting={profiting} />
+        <Icon name="dollar-sign" profiting={profiting} />
       </Header>
 
       <Content>
@@ -68,4 +66,4 @@ export function HighlightCardTotal({
       </Footer>
     </Container>
   );
-};
+}

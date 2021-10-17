@@ -1,8 +1,15 @@
-import React, { createContext, ReactNode, useContext, useState, useEffect } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+/* eslint-disable prettier/prettier */
+import React, {
+  createContext,
+  ReactNode,
+  useContext,
+  useState,
+  useEffect,
+} from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { Transaction } from "../services/types";
-import { useAuth } from "./auth";
+import { Transaction } from '../services/types';
+import { useAuth } from './auth';
 
 interface TransactionProviderProps {
   children: ReactNode;
@@ -19,29 +26,30 @@ function TransactionProvider({ children }: TransactionProviderProps) {
   const { user, userStorageLoading } = useAuth();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
 
-  async function loadTransaction() {
-    const collectionKeyTransactions = `@cryptocontrol:transactions_user:${user.id}`;
-    const transactionsStringified = await AsyncStorage.getItem(collectionKeyTransactions);
-    const transactionsParsed: Transaction[] = transactionsStringified ? JSON.parse(transactionsStringified) : [];
-
-    setTransactions(transactionsParsed);
-  }
-
   useEffect(() => {
-    if (!userStorageLoading) {
-      loadTransaction()
+    async function loadTransaction() {
+      const collectionKeyTransactions = `@cryptocontrol:transactions_user:${user.id}`;
+      const transactionsStringified = await AsyncStorage.getItem(collectionKeyTransactions);
+      const transactionsParsed: Transaction[] = transactionsStringified ? JSON.parse(transactionsStringified) : [];
+      setTransactions(transactionsParsed);
     }
-  }, [userStorageLoading]);
+
+    if (!userStorageLoading) {
+      loadTransaction();
+    }
+  }, [user.id, userStorageLoading]);
 
   return (
-    <AuthContext.Provider value={{
-      transactions,
-      setTransactions
-    }}>
+    <AuthContext.Provider
+      value={{
+        transactions,
+        setTransactions,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
-};
+}
 
 function useTransaction() {
   const context = useContext(AuthContext);

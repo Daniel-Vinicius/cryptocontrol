@@ -18,7 +18,7 @@ import {
   Separator,
   Footer,
   LoadContainer,
-  CoinIcon
+  CoinIcon,
 } from './styles';
 
 interface Props {
@@ -45,7 +45,10 @@ export function CoinSelect({ coin, setCoin, closeSelectCoin }: Props) {
 
       if (!coinNotListed) {
         setCoins(coinsBackup);
-        return Alert.alert('Moeda não encontrada', 'Verifique se API id da moeda no coingecko está correto.')
+        return Alert.alert(
+          'Moeda não encontrada',
+          'Verifique se API id da moeda no coingecko está correto.',
+        );
       }
 
       setCoin(coinNotListed);
@@ -62,7 +65,9 @@ export function CoinSelect({ coin, setCoin, closeSelectCoin }: Props) {
 
     if (coinSearch.trim()) {
       const term = coinSearch.toLowerCase();
-      const coinsFiltered = coinsBackup.filter(coin => coin.name.toLowerCase().indexOf(term) > -1);
+      const coinsFiltered = coinsBackup.filter(
+        (c) => c.name.toLowerCase().indexOf(term) > -1,
+      );
       setCoins(coinsFiltered);
     }
   }
@@ -74,6 +79,7 @@ export function CoinSelect({ coin, setCoin, closeSelectCoin }: Props) {
     const response = await fetch(apiCoingeckoCoinsURL);
     const coinsInfo = await response.json();
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const coinsFormatted: ICoin[] = coinsInfo.map((item: any) => {
       return {
         id: item.id,
@@ -94,7 +100,7 @@ export function CoinSelect({ coin, setCoin, closeSelectCoin }: Props) {
     loadCoins();
   }, []);
 
-  const isSearchingNotListedCoin = coinSearch.charAt(0) === "#";
+  const isSearchingNotListedCoin = coinSearch.charAt(0) === '#';
 
   return (
     <Container>
@@ -106,9 +112,13 @@ export function CoinSelect({ coin, setCoin, closeSelectCoin }: Props) {
         <LoadContainer>
           <ActivityIndicator color={theme.colors.secondary} size="large" />
         </LoadContainer>
-      ) :
+      ) : (
         <>
-          <Input placeholder="Nome da Moeda" value={coinSearch} onChangeText={handleChangeCoinSearch} />
+          <Input
+            placeholder="Nome da Moeda"
+            value={coinSearch}
+            onChangeText={handleChangeCoinSearch}
+          />
           <FlatList
             data={coins}
             style={{ flex: 1, width: '100%' }}
@@ -127,11 +137,16 @@ export function CoinSelect({ coin, setCoin, closeSelectCoin }: Props) {
 
           <Footer>
             <Button
-              title={isSearchingNotListedCoin ? "Buscar moeda" : "Selecionar"}
-              onPress={isSearchingNotListedCoin ? handleSearchCoinInAPI : closeSelectCoin} />
+              title={isSearchingNotListedCoin ? 'Buscar moeda' : 'Selecionar'}
+              onPress={
+                isSearchingNotListedCoin
+                  ? handleSearchCoinInAPI
+                  : closeSelectCoin
+              }
+            />
           </Footer>
         </>
-      }
+      )}
     </Container>
   );
-};
+}

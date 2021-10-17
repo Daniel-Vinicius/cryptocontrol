@@ -9,7 +9,11 @@ interface GetTotalUpdatedParams {
 
 type PromisesReturn = Promise<CoinInTransaction | null>[];
 
-export async function getTotalUpdated({ purchases, sales, coinsWithoutDuplicates }: GetTotalUpdatedParams) {
+export async function getTotalUpdated({
+  purchases,
+  sales,
+  coinsWithoutDuplicates,
+}: GetTotalUpdatedParams) {
   // This is the promise array that populates the coins array with updated price
   const promises: PromisesReturn = coinsWithoutDuplicates.map(async (coin) => {
     const coinData = await getCoinDataNow(coin.id);
@@ -19,17 +23,17 @@ export async function getTotalUpdated({ purchases, sales, coinsWithoutDuplicates
       return null;
     }
 
-    purchases.forEach(purchase => {
+    purchases.forEach((purchase) => {
       if (purchase.coin.id === coin.id) {
         quantityCoin += purchase.coin.quantity;
       }
-    })
+    });
 
-    sales.forEach(sale => {
+    sales.forEach((sale) => {
       if (sale.coin.id === coin.id) {
         quantityCoin -= sale.coin.quantity;
       }
-    })
+    });
 
     const data: CoinInTransaction = {
       ...coin,
@@ -49,8 +53,8 @@ export async function getTotalUpdated({ purchases, sales, coinsWithoutDuplicates
       amount = coin.price * coin.quantity;
     }
 
-    return acc + amount; 
-  }, 0)
+    return acc + amount;
+  }, 0);
 
   return totalUpdated;
 }

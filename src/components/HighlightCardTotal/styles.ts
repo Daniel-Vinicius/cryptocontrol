@@ -5,7 +5,7 @@ import { RFValue } from 'react-native-responsive-fontsize';
 
 interface TotalProps {
   profiting: boolean;
-};
+}
 
 export const Container = styled.View`
   background-color: ${({ theme }) => theme.colors.shape};
@@ -30,12 +30,11 @@ export const Title = styled.Text`
 
 export const Icon = styled(Feather)<TotalProps>`
   font-size: ${RFValue(30)}px;
-  color: ${({ theme, profiting }) => profiting ? theme.colors.success : theme.colors.attention};
+  color: ${({ theme, profiting }) =>
+    profiting ? theme.colors.success : theme.colors.attention};
 `;
 
-export const ContentWrapper = styled.View`
-
-`;
+export const ContentWrapper = styled.View``;
 
 export const Content = styled.View`
   margin-top: ${RFValue(24)}px;
@@ -72,10 +71,12 @@ export const CurrentAmount = styled.Text<TotalProps>`
   font-size: ${RFValue(18)}px;
   font-family: ${({ theme }) => theme.fonts.medium};
 
-  color: ${({ theme, profiting }) => profiting ? theme.colors.success : theme.colors.attention};
+  color: ${({ theme, profiting }) =>
+    profiting ? theme.colors.success : theme.colors.attention};
 `;
 
 export const Percent = styled.Text<TotalProps>`
   font-size: ${RFValue(16)}px;
-  color: ${({ theme, profiting }) => profiting ? theme.colors.success : theme.colors.attention};
+  color: ${({ theme, profiting }) =>
+    profiting ? theme.colors.success : theme.colors.attention};
 `;

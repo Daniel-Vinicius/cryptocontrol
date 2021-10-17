@@ -4,7 +4,10 @@ import { BorderlessButton } from 'react-native-gesture-handler';
 
 import { Feather } from '@expo/vector-icons';
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
-import { getBottomSpace, getStatusBarHeight } from 'react-native-iphone-x-helper';
+import {
+  getBottomSpace,
+  getStatusBarHeight,
+} from 'react-native-iphone-x-helper';
 
 import { Transaction } from '../../services/types';
 
@@ -61,7 +64,7 @@ export const UserName = styled.Text`
 
   font-size: ${RFValue(18)}px;
   font-family: ${({ theme }) => theme.fonts.bold};
- `;
+`;
 
 export const LogoutButton = styled(BorderlessButton)``;
 
@@ -95,9 +98,11 @@ export const Title = styled.Text`
   margin-bottom: 16px;
 `;
 
-export const TransactionsList = styled(FlatList as new () => FlatList<Transaction>).attrs({
+export const TransactionsList = styled(
+  FlatList as new () => FlatList<Transaction>,
+).attrs({
   showsVerticalScrollIndicator: false,
-  contentContainerStyle: { paddingBottom: getBottomSpace() }
+  contentContainerStyle: { paddingBottom: getBottomSpace() },
 })``;
 
 export const LoadContainer = styled.View`

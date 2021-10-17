@@ -17,12 +17,12 @@ export default {
     text: '#969CB2',
     text_light: 'rgba(150, 156, 178, 0.2)',
 
-    background: '#F0F2F5'
+    background: '#F0F2F5',
   },
 
   fonts: {
     regular: 'Poppins_400Regular',
     medium: 'Poppins_500Medium',
-    bold: 'Poppins_700Bold'
-  }
-}
+    bold: 'Poppins_700Bold',
+  },
+};

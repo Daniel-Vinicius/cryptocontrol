@@ -9,7 +9,8 @@ export async function getCoinDataNow(coinId: string): Promise<Coin | null> {
     return null;
   }
 
-  const priceCoinNowInDollar = responseJSON.market_data.current_price.usd as number;
+  const priceCoinNowInDollar = responseJSON.market_data.current_price
+    .usd as number;
 
   const coin: Coin = {
     id: responseJSON.id,

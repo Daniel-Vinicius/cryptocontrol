@@ -14,9 +14,7 @@ export function AppProvider({ children }: AppProviderProps) {
   return (
     <ThemeProvider theme={theme}>
       <AuthProvider>
-        <TransactionProvider>
-          {children}
-        </TransactionProvider>
+        <TransactionProvider>{children}</TransactionProvider>
       </AuthProvider>
     </ThemeProvider>
   );

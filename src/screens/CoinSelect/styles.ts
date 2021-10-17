@@ -2,7 +2,6 @@ import styled from 'styled-components/native';
 
 import { RFValue } from 'react-native-responsive-fontsize';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { Feather } from '@expo/vector-icons';
 
 interface CoinProps {
   isActive: boolean;
@@ -39,7 +38,8 @@ export const Coin = styled.TouchableOpacity<CoinProps>`
   flex-direction: row;
   align-items: center;
 
-  border: ${({ theme, isActive }) => isActive ? `${1.5}px solid ${theme.colors.primary}` : 0};
+  border: ${({ theme, isActive }) =>
+    isActive ? `${1.5}px solid ${theme.colors.primary}` : 0};
 `;
 
 export const CoinIcon = styled.Image`

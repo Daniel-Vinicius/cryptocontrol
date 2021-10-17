@@ -29,20 +29,19 @@ export function SignIn() {
   async function handleSignInWithGoogle() {
     try {
       setIsLoading(true);
-      return await signInWithGoogle();
-    } catch (error) {
-      console.log(error); 
-      Alert.alert('Não foi possível conectar a conta Google');
+      await signInWithGoogle();
       setIsLoading(false);
+    } catch (error) {
+      Alert.alert('Não foi possível conectar a conta Google');
     }
   }
 
   async function handleSignInWithApple() {
     try {
       setIsLoading(true);
-      return await signInWithApple();
+      await signInWithApple();
+      setIsLoading(false);
     } catch (error) {
-      console.log(error); 
       Alert.alert('Não foi possível conectar a conta Apple');
       setIsLoading(false);
     }
@@ -53,18 +52,36 @@ export function SignIn() {
       <Header>
         <TitleWrapper>
           <LogoSvg width={RFValue(160)} height={RFValue(100)} />
-          <Title>Controle suas {'\n'} cryptos de forma {'\n'} muito simples</Title>
+          <Title>
+            Controle suas {'\n'} cryptos de forma {'\n'} muito simples
+          </Title>
         </TitleWrapper>
         <SignTitle>Faça seu login com {'\n'} uma das contas abaixo</SignTitle>
       </Header>
 
       <Footer>
         <FooterWrapper>
-          <SignInSocialButton title="Entrar com Google" svg={GoogleSvg} onPress={handleSignInWithGoogle} />
-          { Platform.OS === 'ios' && <SignInSocialButton title="Entrar com Apple" svg={AppleSvg} onPress={handleSignInWithApple} /> }
+          <SignInSocialButton
+            title="Entrar com Google"
+            svg={GoogleSvg}
+            onPress={handleSignInWithGoogle}
+          />
+          {Platform.OS === 'ios' && (
+            <SignInSocialButton
+              title="Entrar com Apple"
+              svg={AppleSvg}
+              onPress={handleSignInWithApple}
+            />
+          )}
         </FooterWrapper>
 
-        { isLoading && <ActivityIndicator color={theme.colors.shape} size="large" style={{ marginTop: 18 }} /> }
+        {isLoading && (
+          <ActivityIndicator
+            color={theme.colors.shape}
+            size="large"
+            style={{ marginTop: 18 }}
+          />
+        )}
       </Footer>
     </Container>
   );

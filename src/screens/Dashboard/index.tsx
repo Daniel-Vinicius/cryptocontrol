@@ -54,20 +54,34 @@ interface HighlightData {
 
 export function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
-  const [highlightData, setHighlightData] = useState<HighlightData>({} as HighlightData);
+  const [highlightData, setHighlightData] = useState<HighlightData>(
+    {} as HighlightData,
+  );
 
   const theme = useTheme();
   const { signOut, user } = useAuth();
   const { transactions } = useTransaction();
 
   async function loadData() {
-    const purchases = transactions.filter(transaction => transaction.type === 'positive');
-    const sales = transactions.filter(transaction => transaction.type === 'negative');
+    const purchases = transactions.filter(
+      (transaction) => transaction.type === 'positive',
+    );
+    const sales = transactions.filter(
+      (transaction) => transaction.type === 'negative',
+    );
     const coinsWithoutDuplicates = getCoinsWithoutDuplicates(transactions);
 
-    const formattedDateLastPurchase = getLastTransactionDate(transactions, 'positive');
-    const formattedDateLastSale = getLastTransactionDate(transactions, 'negative');
-    const totalInterval = `01 à ${formattedDateLastSale || formattedDateLastPurchase}`;
+    const formattedDateLastPurchase = getLastTransactionDate(
+      transactions,
+      'positive',
+    );
+    const formattedDateLastSale = getLastTransactionDate(
+      transactions,
+      'negative',
+    );
+    const totalInterval = `01 à ${
+      formattedDateLastSale || formattedDateLastPurchase
+    }`;
 
     let purchasesTotal = 0;
     let salesTotal = 0;
@@ -83,28 +97,36 @@ export function Dashboard() {
     });
 
     const total = purchasesTotal - salesTotal;
-    const totalUpdated = await getTotalUpdated({ purchases, sales, coinsWithoutDuplicates });
+    const totalUpdated = await getTotalUpdated({
+      purchases,
+      sales,
+      coinsWithoutDuplicates,
+    });
     const percentage = getPercentage(total, totalUpdated);
 
     setHighlightData({
       purchases: {
         amount: formatToUSD(purchasesTotal),
-        dateLastTransaction: formattedDateLastPurchase ?
-          `Última compra dia ${formattedDateLastPurchase}` : 'Não há compras'
+        dateLastTransaction: formattedDateLastPurchase
+          ? `Última compra dia ${formattedDateLastPurchase}`
+          : 'Não há compras',
       },
       sales: {
         amount: formatToUSD(salesTotal),
-        dateLastTransaction: formattedDateLastSale ?
-          `Última venda dia ${formattedDateLastSale}` : 'Não há vendas'
+        dateLastTransaction: formattedDateLastSale
+          ? `Última venda dia ${formattedDateLastSale}`
+          : 'Não há vendas',
       },
       total: {
         profiting: total <= totalUpdated,
         percentage,
         amountFormatted: formatToUSD(total),
         amountUpdatedFormatted: formatToUSD(totalUpdated),
-        dateLastTransaction: formattedDateLastSale || formattedDateLastPurchase ?
-          totalInterval : 'Não há transações'
-      }
+        dateLastTransaction:
+          formattedDateLastSale || formattedDateLastPurchase
+            ? totalInterval
+            : 'Não há transações',
+      },
     });
 
     setIsLoading(false);
@@ -112,8 +134,10 @@ export function Dashboard() {
 
   useFocusEffect(
     useCallback(() => {
-      loadData()
-    }, [transactions.length]));
+      loadData();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [transactions.length]),
+  );
 
   return (
     <Container>
@@ -121,14 +145,12 @@ export function Dashboard() {
         <LoadContainer>
           <ActivityIndicator color={theme.colors.secondary} size="large" />
         </LoadContainer>
-      ) :
+      ) : (
         <>
           <Header>
             <UserWrapper>
               <UserInfo>
-                <Photo
-                  source={{ uri: user.photo }}
-                />
+                <Photo source={{ uri: user.photo }} />
                 <User>
                   <UserGreeting>Olá, </UserGreeting>
                   <UserName>{user.name}</UserName>
@@ -159,7 +181,9 @@ export function Dashboard() {
               title="Total"
               profiting={highlightData.total.profiting}
               percentage={highlightData.total.percentage}
-              currentAmountFormatted={highlightData.total.amountUpdatedFormatted}
+              currentAmountFormatted={
+                highlightData.total.amountUpdatedFormatted
+              }
               investedAmountFormatted={highlightData.total.amountFormatted}
               lastTransaction={highlightData.total.dateLastTransaction}
             />
@@ -170,13 +194,12 @@ export function Dashboard() {
 
             <TransactionsList
               data={transactions}
-              keyExtractor={item => item.id}
+              keyExtractor={(item) => item.id}
               renderItem={({ item }) => <TransactionCard data={item} />}
             />
-
           </Transactions>
         </>
-      }
+      )}
     </Container>
   );
-};
+}

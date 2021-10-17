@@ -1,22 +1,16 @@
 import React, { useState, useEffect } from 'react';
 
-import {
-  Keyboard,
-  Alert,
-  Modal,
-  TouchableWithoutFeedback
-} from 'react-native';
+import { Keyboard, Alert, Modal, TouchableWithoutFeedback } from 'react-native';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useForm } from 'react-hook-form';
 import { useNavigation } from '@react-navigation/native';
 
-import { useAuth } from '../../hooks/auth';
-import { useTransaction } from '../../hooks/transaction';
-
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import uuid from 'react-native-uuid';
+import { useTransaction } from '../../hooks/transaction';
+import { useAuth } from '../../hooks/auth';
 
 import { formatToUSD } from '../../utils/formatToUSD';
 import { Coin, Transaction } from '../../services/types';
@@ -46,18 +40,20 @@ interface FormData {
 
 type NavigationProps = {
   navigate: (screen: string) => void;
-}
+};
 
 const schema = Yup.object().shape({
   name: Yup.string().required('Nome é obrigatório'),
   quantity: Yup.number()
     .typeError('Informe um valor numérico')
     .positive('A quantidade deve ser positiva')
-    .required('Quantidade é obrigatória')
+    .required('Quantidade é obrigatória'),
 });
 
 export function Register() {
-  const [transactionType, setTransactionType] = useState<'positive' | 'negative' | ''>('');
+  const [transactionType, setTransactionType] = useState<
+    'positive' | 'negative' | ''
+  >('');
   const [coinModalOpen, setCoinModalOpen] = useState(false);
   const [totalValue, setTotalValue] = useState(0);
 
@@ -73,8 +69,14 @@ export function Register() {
   const { user } = useAuth();
   const { transactions, setTransactions } = useTransaction();
 
-  const { control, handleSubmit, reset, watch, formState: { errors } } = useForm({
-    resolver: yupResolver(schema)
+  const {
+    control,
+    handleSubmit,
+    reset,
+    watch,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
   });
 
   function handleTransactionTypeSelect(type: 'positive' | 'negative') {
@@ -94,7 +96,7 @@ export function Register() {
       return Alert.alert('Selecione o tipo da transação.');
     }
 
-    if (coin.id === "coin") {
+    if (coin.id === 'coin') {
       return Alert.alert('Selecione a moeda.');
     }
 
@@ -125,32 +127,40 @@ export function Register() {
         id: coin.id,
         name: coin.name,
         symbol: coin.symbol,
-        image: coin.image
+        image: coin.image,
       },
     };
 
     try {
       const allTransactions = [...transactions, newTransaction];
-      await AsyncStorage.setItem(collectionKeyTransactions, JSON.stringify(allTransactions));
+      await AsyncStorage.setItem(
+        collectionKeyTransactions,
+        JSON.stringify(allTransactions),
+      );
 
       reset();
       setTransactionType('');
-      setCoin({ id: 'coin', symbol: 'coin', name: 'Moeda', image: '', current_price: 0 });
+      setCoin({
+        id: 'coin',
+        symbol: 'coin',
+        name: 'Moeda',
+        image: '',
+        current_price: 0,
+      });
       setTransactions(allTransactions);
 
       navigation.navigate('Listagem');
     } catch (error) {
-      console.log(error);
-      Alert.alert("Não foi possível salvar");
+      Alert.alert('Não foi possível salvar');
     }
   }
 
-  const quantityWatch = watch("quantity");
+  const quantityWatch = watch('quantity');
 
   useEffect(() => {
     const quantity = String(quantityWatch).replace(',', '.');
-    const totalValue = Number(quantity) * coin.current_price;
-    setTotalValue(totalValue);
+    const totalValueCalc = Number(quantity) * coin.current_price;
+    setTotalValue(totalValueCalc);
   }, [quantityWatch, coin.current_price]);
 
   return (
@@ -195,13 +205,14 @@ export function Register() {
               />
             </TransactionTypes>
 
-            <CoinSelectButton title={coin.name} onPress={handleOpenSelectCoinModal} />
-            {!isNaN(totalValue) && (
+            <CoinSelectButton
+              title={coin.name}
+              onPress={handleOpenSelectCoinModal}
+            />
+            {!Number.isNaN(totalValue) && (
               <TotalValueContainer>
                 Valor total de{' '}
-                <TotalValue>
-                  {formatToUSD(totalValue)}
-                </TotalValue>
+                <TotalValue>{formatToUSD(totalValue)}</TotalValue>
               </TotalValueContainer>
             )}
           </Fields>
@@ -219,4 +230,4 @@ export function Register() {
       </Container>
     </TouchableWithoutFeedback>
   );
-};
+}

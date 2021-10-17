@@ -14,4 +14,4 @@ export function Button({ title, onPress, ...rest }: ButtonProps) {
       <Title>{title}</Title>
     </Container>
   );
-};
+}

@@ -3,8 +3,7 @@ import { ActivityIndicator } from 'react-native';
 
 import { VictoryPie } from 'victory-native';
 import { RFValue } from 'react-native-responsive-fontsize';
-import { addMonths, subMonths, format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { addMonths, subMonths, format, ptBR } from 'date-fns';
 
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { useFocusEffect } from '@react-navigation/core';
@@ -64,16 +63,18 @@ export function Resume() {
   async function loadData() {
     setIsLoading(true);
 
-    const purchases = transactions.filter(transaction =>
-      transaction.type === 'positive' &&
-      new Date(transaction.date).getMonth() <= selectedDate.getMonth() &&
-      new Date(transaction.date).getFullYear() <= selectedDate.getFullYear()
+    const purchases = transactions.filter(
+      (transaction) =>
+        transaction.type === 'positive' &&
+        new Date(transaction.date).getMonth() <= selectedDate.getMonth() &&
+        new Date(transaction.date).getFullYear() <= selectedDate.getFullYear(),
     );
 
-    const sales = transactions.filter(transaction =>
-      transaction.type === 'negative' &&
-      new Date(transaction.date).getMonth() <= selectedDate.getMonth() &&
-      new Date(transaction.date).getFullYear() <= selectedDate.getFullYear()
+    const sales = transactions.filter(
+      (transaction) =>
+        transaction.type === 'negative' &&
+        new Date(transaction.date).getMonth() <= selectedDate.getMonth() &&
+        new Date(transaction.date).getFullYear() <= selectedDate.getFullYear(),
     );
 
     const purchasesTotal = purchases.reduce((accumulator, purchase) => {
@@ -86,34 +87,34 @@ export function Resume() {
       return accumulator + Number(amount);
     }, 0);
 
-
     const total = purchasesTotal - salesTotal;
 
     const totalByCoins: CoinData[] = [];
-    const purchasedCoinsWithoutDuplicates = getCoinsWithoutDuplicates(purchases);
+    const purchasedCoinsWithoutDuplicates =
+      getCoinsWithoutDuplicates(purchases);
 
-    purchasedCoinsWithoutDuplicates.forEach(coin => {
+    purchasedCoinsWithoutDuplicates.forEach((coin) => {
       let coinSum = 0;
       let coinQuantity = 0;
 
-      purchases.forEach(purchase => {
+      purchases.forEach((purchase) => {
         if (purchase.coin.id === coin.id) {
           const amount = purchase.coin.quantity * purchase.coin.price;
           coinSum += Number(amount);
           coinQuantity += purchase.coin.quantity;
         }
-      })
+      });
 
-      sales.forEach(sale => {
+      sales.forEach((sale) => {
         if (sale.coin.id === coin.id) {
           const amount = sale.coin.quantity * sale.coin.price;
           coinSum -= Number(amount);
           coinQuantity -= sale.coin.quantity;
         }
-      })
+      });
 
       if (coinSum > 0) {
-        const percent = `${(coinSum / total * 100).toFixed(1)}%`;
+        const percent = `${((coinSum / total) * 100).toFixed(1)}%`;
 
         totalByCoins.push({
           name: coin.name,
@@ -123,7 +124,7 @@ export function Resume() {
           totalFormatted: formatToUSD(coinSum),
           quantity: String(coinQuantity.toFixed(8)),
           percent,
-          color: getRandomColor()
+          color: getRandomColor(),
         });
       }
     });
@@ -134,9 +135,10 @@ export function Resume() {
 
   useFocusEffect(
     useCallback(() => {
-      loadData()
-    }, [selectedDate, transactions.length])
-  )
+      loadData();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedDate, transactions.length]),
+  );
 
   return (
     <Container>
@@ -151,7 +153,11 @@ export function Resume() {
       ) : (
         <Content
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: useBottomTabBarHeight() }}
+          contentContainerStyle={{
+            paddingHorizontal: 24,
+            // eslint-disable-next-line react-hooks/rules-of-hooks
+            paddingBottom: useBottomTabBarHeight(),
+          }}
         >
           <MonthSelect>
             <MonthSelectButton onPress={() => handleDateChange('prev')}>
@@ -170,7 +176,7 @@ export function Resume() {
           <ChartContainer>
             <VictoryPie
               data={totalByCoin}
-              colorScale={totalByCoin.map(coin => coin.color)}
+              colorScale={totalByCoin.map((coin) => coin.color)}
               x="percent"
               y="total"
               labelRadius={50}
@@ -178,13 +184,13 @@ export function Resume() {
                 labels: {
                   fontSize: `${RFValue(18)}px`,
                   fontFamily: theme.fonts.regular,
-                  fill: theme.colors.shape
-                }
+                  fill: theme.colors.shape,
+                },
               }}
             />
           </ChartContainer>
 
-          {totalByCoin.map(coin => (
+          {totalByCoin.map((coin) => (
             <HistoryCard
               key={coin.symbol}
               color={coin.color}
@@ -197,4 +203,4 @@ export function Resume() {
       )}
     </Container>
   );
-};
+}
