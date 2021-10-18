@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
+/* eslint-disable */
 import React, {
   createContext,
   ReactNode,
@@ -6,12 +6,12 @@ import React, {
   useState,
   useEffect,
 } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import * as AuthSession from 'expo-auth-session';
 import * as AppleAuthentication from 'expo-apple-authentication';
 
-const collectionKeyUser = '@cryptocontrol:user';
+import { database } from '../database';
+import { User as ModelUser } from '../database/model/User';
 
 const { CLIENT_ID } = process.env;
 const { REDIRECT_URI } = process.env;
@@ -48,6 +48,20 @@ function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User>({} as User);
   const [userStorageLoading, setUserStorageLoading] = useState(true);
 
+  async function saveUserOnDatabase(userParam: User): Promise<void> {
+    const userCollection = database.get<ModelUser>('users');
+    const photo = userParam.photo ? userParam.photo : `https://ui-avatars.com/api/?name=${userParam.name}&length=1`;
+
+    await database.write(async () => {
+      await userCollection.create((newUser) => {
+        newUser.user_id = userParam.id,
+          newUser.name = userParam.name,
+          newUser.email = userParam.email,
+          newUser.photo = photo;
+      });
+    });
+  }
+
   async function signInWithGoogle() {
     try {
       const RESPONSE_TYPE = 'token';
@@ -73,10 +87,7 @@ function AuthProvider({ children }: AuthProviderProps) {
         };
 
         setUser(userLogged);
-        await AsyncStorage.setItem(
-          collectionKeyUser,
-          JSON.stringify(userLogged),
-        );
+        await saveUserOnDatabase(userLogged);
       }
     } catch (error) {
       throw new Error(String(error));
@@ -102,10 +113,7 @@ function AuthProvider({ children }: AuthProviderProps) {
         };
 
         setUser(userLogged);
-        await AsyncStorage.setItem(
-          collectionKeyUser,
-          JSON.stringify(userLogged),
-        );
+        await saveUserOnDatabase(userLogged);
       }
     } catch (error) {
       throw new Error(String(error));
@@ -113,17 +121,27 @@ function AuthProvider({ children }: AuthProviderProps) {
   }
 
   async function signOut() {
-    setUser({} as User);
-    await AsyncStorage.removeItem(collectionKeyUser);
+    try {
+      const userCollection = database.get<ModelUser>('users');
+      await database.write(async () => {
+        const userSelected = await userCollection.find(user.id);
+        await userSelected.destroyPermanently();
+      });
+
+      setUser({} as User);
+    } catch (error) {
+      throw new Error(String(error));
+    }
   }
 
   useEffect(() => {
     async function loadUserStorageData() {
-      const userInStorage = await AsyncStorage.getItem(collectionKeyUser);
+      const userCollection = database.get<ModelUser>('users');
+      const response = await userCollection.query().fetch();
 
-      if (userInStorage) {
-        const userLogged = JSON.parse(userInStorage) as User;
-        setUser(userLogged);
+      if (response.length > 0) {
+        const userData = response[0]._raw as unknown as User;
+        setUser(userData);
         setUserStorageLoading(false);
       }
     }
