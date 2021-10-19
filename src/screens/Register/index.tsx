@@ -91,6 +91,10 @@ export function Register() {
     setCoinModalOpen(false);
   }
 
+  function changeCoinPrice(price: string) {
+    setCoin({ ...coin, current_price: Number(price) });
+  }
+
   async function handleRegister(form: FormData) {
     if (!transactionType) {
       return Alert.alert('Selecione o tipo da transação.');
@@ -100,7 +104,15 @@ export function Register() {
       return Alert.alert('Selecione a moeda.');
     }
 
-    const collectionKeyTransactions = `@cryptocontrol:transactions_user:${user.id}`;
+    if (
+      !coin.current_price ||
+      Number.isNaN(coin.current_price) ||
+      coin.current_price <= 0
+    ) {
+      return Alert.alert('Preço é obrigatório e deve ser um número positivo.');
+    }
+
+    const collectionKeyTransactions = `@cryptocontrol:transactions_user:${user.user_id}`;
 
     const amountFormatted = formatToUSD(totalValue);
 
@@ -156,6 +168,8 @@ export function Register() {
   }
 
   const quantityWatch = watch('quantity');
+  const defaultValueCoinPrice =
+    String(coin.current_price) === '0' ? '' : String(coin.current_price);
 
   useEffect(() => {
     const quantity = String(quantityWatch).replace(',', '.');
@@ -188,6 +202,23 @@ export function Register() {
               keyboardType="numeric"
               error={errors.quantity && errors.quantity.message}
             />
+
+            {coin.id !== 'coin' && (
+              <>
+                <TotalValue style={{ marginTop: 16 }}>
+                  Preço da moeda em dólar
+                </TotalValue>
+
+                <InputForm
+                  control={control}
+                  name="price"
+                  placeholder="Preço da moeda"
+                  keyboardType="numeric"
+                  defaultValue={defaultValueCoinPrice}
+                  onChangeText={changeCoinPrice}
+                />
+              </>
+            )}
 
             <TransactionTypes>
               <TransactionTypeButton
