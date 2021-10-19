@@ -21,7 +21,8 @@ interface AuthProviderProps {
 }
 
 interface User {
-  id: string;
+  db_id: string;
+  user_id: string;
   name: string;
   email: string;
   photo?: string;
@@ -29,7 +30,7 @@ interface User {
 
 interface IAuthContextData {
   user: User;
-  signInWithGoogle(): Promise<void>;
+  signInWithGoogle(): Promise<void| string>;
   signInWithApple(): Promise<void>;
   signOut(): Promise<void>;
   userStorageLoading: boolean;
@@ -48,18 +49,22 @@ function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User>({} as User);
   const [userStorageLoading, setUserStorageLoading] = useState(true);
 
-  async function saveUserOnDatabase(userParam: User): Promise<void> {
+  async function saveUserOnDatabase(userParam: Omit<User, "db_id">): Promise<string> {
     const userCollection = database.get<ModelUser>('users');
     const photo = userParam.photo ? userParam.photo : `https://ui-avatars.com/api/?name=${userParam.name}&length=1`;
 
-    await database.write(async () => {
-      await userCollection.create((newUser) => {
-        newUser.user_id = userParam.id,
+    const createAndReturnIdUser = await database.write(async () => {
+      const userModelDB = await userCollection.create((newUser) => {
+        newUser.user_id = userParam.user_id,
           newUser.name = userParam.name,
           newUser.email = userParam.email,
           newUser.photo = photo;
       });
+
+      return userModelDB.id;
     });
+
+    return createAndReturnIdUser;
   }
 
   async function signInWithGoogle() {
@@ -73,6 +78,10 @@ function AuthProvider({ children }: AuthProviderProps) {
         authUrl,
       })) as AuthorizationResponse;
 
+      if (type === 'dismiss') {
+        return 'dismiss';
+      }
+
       if (type === 'success') {
         const response = await fetch(
           `https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${params.access_token}`,
@@ -80,14 +89,15 @@ function AuthProvider({ children }: AuthProviderProps) {
         const userInfo = await response.json();
 
         const userLogged = {
-          id: userInfo.id,
+          user_id: userInfo.id,
           email: userInfo.email,
           name: userInfo.given_name,
           photo: userInfo.picture,
         };
 
-        setUser(userLogged);
-        await saveUserOnDatabase(userLogged);
+        const db_id = await saveUserOnDatabase(userLogged);
+
+        setUser({ ...userLogged, db_id });
       }
     } catch (error) {
       throw new Error(String(error));
@@ -104,16 +114,15 @@ function AuthProvider({ children }: AuthProviderProps) {
       });
 
       if (credential) {
-        const name = credential.fullName!.givenName!;
         const userLogged = {
-          id: credential.user,
+          user_id: credential.user,
           email: credential.email!,
-          name,
-          photo: `https://ui-avatars.com/api/?name=${name}&length=1`,
+          name: credential.fullName!.givenName!,
+          photo: `https://ui-avatars.com/api/?name=${credential.fullName!.givenName!}&length=1`,
         };
 
-        setUser(userLogged);
-        await saveUserOnDatabase(userLogged);
+        const db_id = await saveUserOnDatabase(userLogged);
+        setUser({ ...userLogged, db_id });
       }
     } catch (error) {
       throw new Error(String(error));
@@ -124,7 +133,7 @@ function AuthProvider({ children }: AuthProviderProps) {
     try {
       const userCollection = database.get<ModelUser>('users');
       await database.write(async () => {
-        const userSelected = await userCollection.find(user.id);
+        const userSelected = await userCollection.find(user.db_id);
         await userSelected.destroyPermanently();
       });
 
@@ -140,7 +149,16 @@ function AuthProvider({ children }: AuthProviderProps) {
       const response = await userCollection.query().fetch();
 
       if (response.length > 0) {
-        const userData = response[0]._raw as unknown as User;
+        const userDataOnDB = response[0];
+
+        const userData: User = {
+          user_id: userDataOnDB.user_id,
+          email: userDataOnDB.email,
+          name: userDataOnDB.name,
+          photo: userDataOnDB.photo,
+          db_id: userDataOnDB.id
+        };
+
         setUser(userData);
         setUserStorageLoading(false);
       }
