@@ -1,4 +1,5 @@
-/* eslint-disable */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+/* eslint-disable prettier/prettier */
 import React, {
   createContext,
   ReactNode,
@@ -30,7 +31,7 @@ interface User {
 
 interface IAuthContextData {
   user: User;
-  signInWithGoogle(): Promise<void| string>;
+  signInWithGoogle(): Promise<void | string>;
   signInWithApple(): Promise<void>;
   signOut(): Promise<void>;
   userStorageLoading: boolean;

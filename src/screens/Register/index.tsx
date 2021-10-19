@@ -2,18 +2,15 @@ import React, { useState, useEffect } from 'react';
 
 import { Keyboard, Alert, Modal, TouchableWithoutFeedback } from 'react-native';
 
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useForm } from 'react-hook-form';
 import { useNavigation } from '@react-navigation/native';
 
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import uuid from 'react-native-uuid';
 import { useTransaction } from '../../hooks/transaction';
-import { useAuth } from '../../hooks/auth';
 
 import { formatToUSD } from '../../utils/formatToUSD';
-import { Coin, Transaction } from '../../services/types';
+import { Coin, TransactionType } from '../../services/types';
 
 import { InputForm } from '../../components/Form/InputForm';
 import { Button } from '../../components/Form/Button';
@@ -51,9 +48,10 @@ const schema = Yup.object().shape({
 });
 
 export function Register() {
-  const [transactionType, setTransactionType] = useState<
-    'positive' | 'negative' | ''
-  >('');
+  const [transactionType, setTransactionType] = useState<TransactionType | ''>(
+    '',
+  );
+
   const [coinModalOpen, setCoinModalOpen] = useState(false);
   const [totalValue, setTotalValue] = useState(0);
 
@@ -66,8 +64,7 @@ export function Register() {
   });
 
   const navigation = useNavigation<NavigationProps>();
-  const { user } = useAuth();
-  const { transactions, setTransactions } = useTransaction();
+  const { createNewTransaction } = useTransaction();
 
   const {
     control,
@@ -112,8 +109,6 @@ export function Register() {
       return Alert.alert('Preço é obrigatório e deve ser um número positivo.');
     }
 
-    const collectionKeyTransactions = `@cryptocontrol:transactions_user:${user.user_id}`;
-
     const amountFormatted = formatToUSD(totalValue);
 
     const date = new Date();
@@ -125,8 +120,7 @@ export function Register() {
       minute: '2-digit',
     }).format(date);
 
-    const newTransaction: Transaction = {
-      id: String(uuid.v4()),
+    const newTransaction = {
       name: form.name,
       type: transactionType,
       date,
@@ -144,11 +138,7 @@ export function Register() {
     };
 
     try {
-      const allTransactions = [...transactions, newTransaction];
-      await AsyncStorage.setItem(
-        collectionKeyTransactions,
-        JSON.stringify(allTransactions),
-      );
+      await createNewTransaction(newTransaction);
 
       reset();
       setTransactionType('');
@@ -159,7 +149,6 @@ export function Register() {
         image: '',
         current_price: 0,
       });
-      setTransactions(allTransactions);
 
       navigation.navigate('Listagem');
     } catch (error) {

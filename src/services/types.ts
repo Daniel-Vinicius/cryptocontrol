@@ -13,13 +13,16 @@ export interface CoinInTransaction extends Omit<Coin, 'current_price'> {
 
 export type CoinDetails = Omit<Coin, 'current_price'>;
 
+export type TransactionType = 'positive' | 'negative';
+
 export interface Transaction {
   id: string;
   name: string;
-  type: 'positive' | 'negative';
+  type: TransactionType;
   date: Date;
   dateFormatted: string;
   amount: number;
   amountFormatted: string;
   coin: CoinInTransaction;
+  user_id: string;
 }
