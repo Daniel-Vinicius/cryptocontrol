@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 
+import * as SplashScreen from 'expo-splash-screen';
 import * as Updates from 'expo-updates';
 import AppLoading from 'expo-app-loading';
 import { StatusBar } from 'expo-status-bar';
@@ -14,6 +15,8 @@ import { AppProvider } from './src/hooks';
 import { Routes } from './src/routes';
 import { useAuth } from './src/hooks/auth';
 
+SplashScreen.preventAutoHideAsync();
+
 export default function App(): JSX.Element {
   useEffect(() => {
     async function updateApp(): Promise<void> {
@@ -27,6 +30,14 @@ export default function App(): JSX.Element {
     if (process.env.NODE_ENV !== 'development') {
       updateApp();
     }
+
+    async function hideSplashScreen() {
+      setTimeout(async () => {
+        await SplashScreen.hideAsync();
+      }, 1000);
+    }
+
+    hideSplashScreen();
   }, []);
 
   const [fontsLoaded] = useFonts({
