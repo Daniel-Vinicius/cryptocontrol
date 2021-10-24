@@ -14,6 +14,11 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     enabled: true,
   },
   assetBundlePatterns: ['**/*'],
+  splash: {
+    image: './assets/splash.png',
+    resizeMode: 'contain',
+    backgroundColor: '#5636d3',
+  },
   ios: {
     supportsTablet: true,
     bundleIdentifier: 'com.dan.cryptocontrol',

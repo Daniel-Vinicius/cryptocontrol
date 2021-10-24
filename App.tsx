@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import SplashScreen from 'react-native-splash-screen';
 
 import * as Updates from 'expo-updates';
 import AppLoading from 'expo-app-loading';
@@ -28,8 +27,6 @@ export default function App(): JSX.Element {
     if (process.env.NODE_ENV !== 'development') {
       updateApp();
     }
-
-    SplashScreen.hide();
   }, []);
 
   const [fontsLoaded] = useFonts({

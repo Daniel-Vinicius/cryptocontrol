@@ -18,6 +18,4 @@ target 'cryptocontrol' do
   #     flipper_post_install(installer)
   #   end
   # end
-  pod 'react-native-splash-screen', :path => '../node_modules/react-native-splash-screen'
-
 end
