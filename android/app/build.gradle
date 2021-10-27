@@ -132,7 +132,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.danielvinicius.cryptocontrol"
+        applicationId "com.dan.cryptocontrol"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

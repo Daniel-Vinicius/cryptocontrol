@@ -1,4 +1,4 @@
-package com.danielvinicius.cryptocontrol.generated;
+package com.dan.cryptocontrol.generated;
 
 import java.util.Arrays;
 import java.util.List;
