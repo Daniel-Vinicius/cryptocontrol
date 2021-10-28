@@ -15,8 +15,6 @@
 
 * **Criar a feature de excluir um registro**
 
-* **Criar a feature de excluir todos os registros**
-
 * **Exportar e importar os dados do Watermelon DB em CSV**
 
 * **Adicionar Sentry**
