@@ -1,4 +1,5 @@
 import React from 'react';
+import TextTicker from 'react-native-text-ticker';
 
 import {
   Container,
@@ -37,7 +38,16 @@ export function HighlightCard({
       </Header>
 
       <Footer>
-        <Amount type={type}>{amount}</Amount>
+        <TextTicker
+          style={{ marginTop: 38 }}
+          duration={5000}
+          loop
+          bounce
+          repeatSpacer={50}
+          marqueeDelay={1000}
+        >
+          <Amount type={type}>{amount}</Amount>
+        </TextTicker>
         <LastTransaction type={type}>{lastTransaction}</LastTransaction>
       </Footer>
     </Container>
