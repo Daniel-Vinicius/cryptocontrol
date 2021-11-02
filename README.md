@@ -1,10 +1,10 @@
 # Crypto Control
 
-![GitHub repo size](https://img.shields.io/github/repo-size/Daniel-Vinicius/cryptocontrol?style=for-the-badge)
-![GitHub language count](https://img.shields.io/github/languages/count/Daniel-Vinicius/cryptocontrol?style=for-the-badge)
-![GitHub forks](https://img.shields.io/github/forks/Daniel-Vinicius/cryptocontrol?style=for-the-badge)
-![Bitbucket open issues](https://img.shields.io/bitbucket/issues/Daniel-Vinicius/cryptocontrol?style=for-the-badge)
-![Bitbucket open pull requests](https://img.shields.io/bitbucket/pr-raw/Daniel-Vinicius/cryptocontrol?style=for-the-badge)
+![GitHub repo size](https://img.shields.io/github/repo-size/Daniel-Vinicius/cryptocontrol)
+![GitHub forks](https://img.shields.io/github/forks/Daniel-Vinicius/cryptocontrol)
+[![typescript](https://img.shields.io/badge/typescript-4.0.0-3178c6?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
+[![MIT License](https://img.shields.io/badge/license-MIT-green)](https://github.com/Daniel-Vinicius/cryptocontrol/blob/master/LICENSE)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://www.digitalocean.com/community/tutorial_series/an-introduction-to-open-source)<br>
 
 <!-- <img src="exemplo-image.png" alt="exemplo imagem"> -->
 
