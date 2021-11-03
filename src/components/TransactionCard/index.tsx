@@ -11,6 +11,8 @@ import {
   Date,
 } from './styles';
 
+import { ScroolHorizontalText } from '../../global/ComponentsStyled';
+
 import { Transaction } from '../../services/types';
 
 interface TransactionCardProps {
@@ -23,9 +25,11 @@ export function TransactionCard({ data }: TransactionCardProps) {
   return (
     <Container>
       <Title>{name}</Title>
-      <Amount type={type}>
-        {type === 'negative' ? `- ${amountFormatted}` : amountFormatted}
-      </Amount>
+      <ScroolHorizontalText style={{marginTop: 2}}>
+        <Amount type={type}>
+          {type === 'negative' ? `- ${amountFormatted}` : amountFormatted}
+        </Amount>
+      </ScroolHorizontalText>
 
       <Footer>
         <Coin>

@@ -25,8 +25,6 @@ export const Amount = styled.Text<TransactionProps>`
 
   color: ${({ theme, type }) =>
     type === 'negative' ? theme.colors.attention : theme.colors.success};
-
-  margin-top: 2px;
 `;
 
 export const Footer = styled.View`
