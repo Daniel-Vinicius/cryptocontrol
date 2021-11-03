@@ -25,7 +25,7 @@ export function TransactionCard({ data }: TransactionCardProps) {
   return (
     <Container>
       <Title>{name}</Title>
-      <ScroolHorizontalText style={{marginTop: 2}}>
+      <ScroolHorizontalText style={{ marginTop: 2 }}>
         <Amount type={type}>
           {type === 'negative' ? `- ${amountFormatted}` : amountFormatted}
         </Amount>
