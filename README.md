@@ -10,6 +10,7 @@
 
 > Crypto Control te ajuda a calcular quanto você ganhou ou perdeu investindo em uma ou mais cryptomoedas de forma rápida e simples
 
+![screens](https://github.com/Daniel-Vinicius/cryptocontrol/assets/66279500/9a5a0d7c-d3a7-4462-9d31-7ce8905e687f)
 
 
 ---
