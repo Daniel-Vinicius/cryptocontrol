@@ -10,9 +10,7 @@
 
 > Crypto Control te ajuda a calcular quanto você ganhou ou perdeu investindo em uma ou mais cryptomoedas de forma rápida e simples
 
-<a target="new" href='https://play.google.com/store/apps/details?id=com.dan.cryptocontrol&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
-  <img width="200px" alt='Disponível no Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/pt_badge_web_generic.png'/>
-</a>
+
 
 ---
 
